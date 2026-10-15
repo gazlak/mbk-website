@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <script>document.documentElement.classList.add('js')</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MBK BAU | Stavební firma Znojmo</title>
+  <link rel="icon" type="image/png" href="starting-sources/mbkbau-white.png" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:      #F04F12;
+      --primary-dim:  #d44410;
+      --on-primary:   #ffffff;
+      --surface:      #ffffff;
+      --surface-low:  #f3f3f6;
+      --surface-mid:  #eeeef0;
+      --surface-high: #e8e8ea;
+      --on-surface:   #1c1b1b;
+      --on-surface-variant: #5b4444;
+      --radius:       0.75rem;
+    }
+
+    html { scroll-behavior: smooth; }
+    section[id] { scroll-margin-top: 4.5rem; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--surface);
+      color: var(--on-surface);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ─── Utility ──────────────────────────────────────────────── */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ─── Header / Nav ─────────────────────────────────────────── */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 2rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .logo-link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .logo-img {
+      height: 2.5rem;
+      width: auto;
+      display: block;
+    }
+
+    .logo-img--footer {
+      height: 10rem;
+    }
+
+    /* Desktop nav links */
+    .nav-links {
+      display: none;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.875rem;
+      letter-spacing: -0.01em;
+      color: var(--on-surface-variant);
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--primary); }
+    .nav-links a.active { color: var(--primary); }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--primary);
+      color: var(--on-primary);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.875rem;
+      letter-spacing: -0.01em;
+      padding: 0.7rem 1.5rem;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: filter 0.2s, transform 0.15s;
+      box-shadow: 0 8px 40px rgba(240,79,18,0.18);
+    }
+
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    /* Hamburger (CSS-only checkbox trick) */
+    .nav-toggle { display: none; }
+
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 2rem;
+      height: 2rem;
+      cursor: pointer;
+      padding: 0.25rem;
+    }
+
+    .hamburger span {
+      display: block;
+      height: 2px;
+      background: var(--on-surface);
+      border-radius: 2px;
+      transition: transform 0.25s, opacity 0.2s;
+    }
+
+    .nav-toggle:checked ~ .nav-inner .hamburger span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .nav-toggle:checked ~ .nav-inner .hamburger span:nth-child(2) {
+      opacity: 0;
+    }
+    .nav-toggle:checked ~ .nav-inner .hamburger span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      padding: 1rem 2rem 1.5rem;
+      gap: 1rem;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-toggle:checked ~ .mobile-menu { display: flex; }
+
+    .mobile-menu a {
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--on-surface-variant);
+      padding: 0.4rem 0;
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--primary); }
+
+    .mobile-menu .btn-primary { align-self: flex-start; margin-top: 0.5rem; }
+
+    /* ─── Hero ─────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        105deg,
+        rgba(28,27,27,0.88) 0%,
+        rgba(28,27,27,0.55) 50%,
+        rgba(28,27,27,0.1) 100%
+      );
+    }
+
+    .js .hero-content { visibility: hidden; }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 8rem 2rem 4rem;
+      width: 100%;
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      color: #ffffff;
+      margin-bottom: 1.5rem;
+      max-width: 12ch;
+    }
+
+    .hero h1 .accent { color: var(--primary); }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-weight: 400;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.78);
+      max-width: 44ch;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .btn-glass {
+      display: inline-block;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.22);
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.875rem;
+      letter-spacing: -0.01em;
+      padding: 0.9rem 2rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-glass:hover { background: rgba(255,255,255,0.22); }
+
+    .btn-primary.hero-cta { padding: 0.9rem 2rem; font-size: 0.875rem; }
+
+    /* ─── Services Slider ──────────────────────────────────────── */
+    .services-section {
+      background: var(--surface-low);
+      padding: 4rem 2rem;
+      overflow: hidden;
+    }
+
+    @keyframes rotate-services {
+      0%   { opacity: 0; transform: translateY(12px); }
+      5%   { opacity: 1; transform: translateY(0); }
+      20%  { opacity: 1; transform: translateY(0); }
+      25%  { opacity: 0; transform: translateY(-12px); }
+      100% { opacity: 0; }
+    }
+
+    .service-container {
+      position: relative;
+      height: 3.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .service-container span {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.2rem, 3.5vw, 2rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+      color: var(--on-surface);
+      opacity: 0;
+      animation: rotate-services 15s infinite;
+      white-space: nowrap;
+    }
+
+    .service-container span:nth-child(1) { animation-delay: 0s; }
+    .service-container span:nth-child(2) { animation-delay: 3s; }
+    .service-container span:nth-child(3) { animation-delay: 6s; }
+    .service-container span:nth-child(4) { animation-delay: 9s; }
+    .service-container span:nth-child(5) { animation-delay: 12s; }
+
+    /* ─── Náš přístup ──────────────────────────────────────────── */
+    .approach-section {
+      padding: 6rem 2rem;
+      background: var(--surface);
+    }
+
+    .approach-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .approach-text .section-eyebrow {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .approach-text h2 {
+      font-size: clamp(2rem, 4vw, 3.25rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      color: var(--on-surface);
+      margin-bottom: 1.5rem;
+    }
+
+    .approach-text p {
+      font-size: 1.0625rem;
+      font-weight: 400;
+      line-height: 1.75;
+      color: var(--on-surface-variant);
+      max-width: 48ch;
+    }
+
+    /* Photo composition */
+    .photo-wrapper {
+      position: relative;
+      padding-bottom: 60px;
+    }
+
+    .photo-main {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      display: block;
+    }
+
+    .photo-inset {
+      position: absolute;
+      bottom: 0;
+      right: -1.5rem;
+      width: 220px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      border: 4px solid var(--surface);
+      box-shadow: 0 20px 60px rgba(28,27,27,0.18);
+    }
+
+    /* ─── Naše služby ──────────────────────────────────────────── */
+    .services-detail-section {
+      padding: 6rem 2rem;
+      background: var(--surface-low);
+    }
+
+    .services-detail-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    /* reversed photo wrapper — inset overflows to the left */
+    .photo-wrapper--reversed {
+      padding-bottom: 60px;
+      padding-left: 30px;
+    }
+
+    .photo-wrapper--reversed .photo-inset {
+      right: auto;
+      left: -1.5rem;
+    }
+
+    .services-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .services-list li {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid var(--surface-high);
+      font-size: 1.0625rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--on-surface);
+      transition: color 0.2s;
+    }
+
+    .services-list li:first-child { border-top: 1px solid var(--surface-high); }
+
+    .services-list li:hover { color: var(--primary); }
+
+    .service-num {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--primary);
+      min-width: 1.5rem;
+    }
+
+    /* ─── Contact Section ──────────────────────────────────────── */
+    .contact-section {
+      background: var(--surface-low);
+      padding: 6rem 2rem;
+    }
+
+    .contact-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .contact-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 3rem;
+      box-shadow: 0 20px 80px rgba(28,27,27,0.05);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    .contact-heading h3 {
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: var(--primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .contact-heading p {
+      color: var(--on-surface-variant);
+      line-height: 1.65;
+      font-size: 0.9375rem;
+    }
+
+    .contact-items {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .contact-icon {
+      flex-shrink: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: rgba(240,79,18,0.1);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .contact-icon svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      fill: var(--primary);
+    }
+
+    .contact-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+      margin-bottom: 0.25rem;
+    }
+
+    .contact-value {
+      font-size: 1.0625rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--on-surface);
+    }
+
+    /* ─── Kalkulačka ───────────────────────────────────────────── */
+    .calc-section {
+      background: var(--surface);
+      padding: 6rem 2rem;
+    }
+
+    .calc-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .calc-card {
+      background: var(--surface-low);
+      border-radius: var(--radius);
+      padding: 3rem;
+      box-shadow: 0 20px 80px rgba(28,27,27,0.05);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    .calc-card .contact-heading { margin-bottom: 1.75rem; }
+
+    .calc-result {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .calc-price {
+      font-size: clamp(1.5rem, 3vw, 1.875rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--primary);
+      line-height: 1.15;
+      margin: 0.25rem 0 1rem;
+    }
+
+    .calc-breakdown {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+
+    .calc-breakdown li {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      color: var(--on-surface-variant);
+    }
+
+    .calc-breakdown strong { color: var(--on-surface); font-weight: 700; }
+
+    .calc-note {
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
+    }
+
+    .calc-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .calc-actions a.calc-link {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      text-decoration: none;
+    }
+    .calc-actions a.calc-link:hover { color: var(--primary); }
+
+    .calc-steps { display: flex; flex-direction: column; gap: 2rem; }
+
+    .calc-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+
+    .calc-chip {
+      font: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius);
+      border: 2px solid transparent;
+      background: var(--surface);
+      color: var(--on-surface);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .calc-chip:hover { color: var(--primary); }
+    .calc-chip.is-active { background: var(--primary); color: #fff; }
+
+    .calc-options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .calc-option {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--surface);
+      border: 2px solid transparent;
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .calc-option:has(input:checked) { border-color: var(--primary); }
+    .calc-option input { accent-color: var(--primary); width: 1.1rem; height: 1.1rem; }
+    .calc-option small {
+      margin-left: auto;
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      white-space: nowrap;
+    }
+
+    .calc-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .calc-field label { display: block; }
+
+    .calc-field input[type="number"] {
+      width: 100%;
+      font: inherit;
+      font-size: 1rem;
+      padding: 0.7rem 0.9rem;
+      background: var(--surface);
+      color: var(--on-surface);
+      border: 2px solid transparent;
+      border-radius: var(--radius);
+    }
+
+    .calc-field input:focus-visible,
+    .calc-chip:focus-visible,
+    .calc-option:has(input:focus-visible) {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .calc-hidden { display: none !important; }
+
+    /* ─── Map ──────────────────────────────────────────────────── */
+    .map-section {
+      height: 500px;
+    }
+
+    #leaflet-map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ─── Footer ───────────────────────────────────────────────── */
+    .site-footer {
+      background: var(--on-surface);
+      color: rgba(255,255,255,0.75);
+      padding: 3.5rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .footer-brand p {
+      font-size: 0.875rem;
+      line-height: 1.65;
+      max-width: 30ch;
+    }
+
+    .footer-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .footer-col h4 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 1rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .footer-col ul a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.6);
+      transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: var(--primary); }
+
+    .footer-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-contact-item svg {
+      width: 1rem;
+      height: 1rem;
+      fill: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .footer-bottom {
+      max-width: 1280px;
+      margin: 2.5rem auto 0;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.8125rem;
+      color: rgba(255,255,255,0.35);
+      text-align: center;
+    }
+
+    /* ─── Responsive: 768px+ ────────────────────────────────────── */
+    @media (min-width: 768px) {
+      /* Nav */
+      .hamburger { display: none; }
+      .nav-links  { display: flex; }
+      .mobile-menu { display: none !important; }
+
+      /* Approach */
+      .approach-inner {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      /* Services detail */
+      .services-detail-inner {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      /* Contact card */
+      .contact-card {
+        grid-template-columns: 1fr 2fr;
+      }
+
+      .contact-items {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      /* Calculator */
+      .calc-card {
+        grid-template-columns: 1fr 2fr;
+      }
+
+      .calc-options {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .calc-fields {
+        grid-template-columns: repeat(5, 1fr);
+      }
+
+      /* Footer */
+      .footer-inner {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      /* Photo inset stays clipped on small screens */
+      .photo-inset {
+        right: -2rem;
+      }
+
+      .contact-card,
+      .calc-card {
+        padding: 4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Header ─────────────────────────────────────────────── -->
+<input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
+<header class="site-header">
+  <div class="nav-inner">
+    <a href="#" class="logo-link">
+      <img src="starting-sources/mbkbau.png" alt="MBK BAU" class="logo-img" />
+    </a>
+
+    <nav aria-label="Hlavní navigace">
+      <ul class="nav-links">
+        <li><a href="#pristup">Náš přístup</a></li>
+        <li><a href="#co-delame">Služby</a></li>
+        <li><a href="#kalkulacka">Kalkulačka</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+      </ul>
+    </nav>
+
+    <label for="nav-toggle" class="hamburger" aria-label="Otevřít menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+
+    <a href="#kontakt" class="btn-primary" style="display:none" id="header-cta">Kontaktujte nás</a>
+  </div>
+
+  <!-- Mobile dropdown -->
+  <nav class="mobile-menu" aria-label="Mobilní navigace">
+    <a href="#pristup" onclick="document.getElementById('nav-toggle').checked=false">Náš přístup</a>
+    <a href="#co-delame" onclick="document.getElementById('nav-toggle').checked=false">Služby</a>
+    <a href="#kalkulacka" onclick="document.getElementById('nav-toggle').checked=false">Kalkulačka</a>
+    <a href="#kontakt" onclick="document.getElementById('nav-toggle').checked=false">Kontakt</a>
+    <a href="#kontakt" class="btn-primary" onclick="document.getElementById('nav-toggle').checked=false">Kontaktujte nás</a>
+  </nav>
+</header>
+
+<script>
+  // Show CTA button on desktop, hide hamburger label
+  (function() {
+    var mql = window.matchMedia('(min-width: 768px)');
+    function update(e) {
+      document.getElementById('header-cta').style.display = e.matches ? 'inline-block' : 'none';
+    }
+    mql.addEventListener('change', update);
+    update(mql);
+  })();
+</script>
+
+<!-- ─── Hero ───────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg">
+    <img
+      src="images/hero.jpg"
+      alt="Stavební projekt v pohybu"
+      loading="eager"
+    />
+  </div>
+
+  <div class="hero-content">
+    <span class="hero-eyebrow">Prémiové stavební služby · Znojmo</span>
+    <h1>STAVÍME<br/><span class="accent">BUDOUCNOST</span></h1>
+    <p class="hero-subtitle">
+      Precizní řemeslo a spolehlivost pro každý projekt.<br/>
+      Od základů po poslední detail.
+    </p>
+    <div class="hero-ctas">
+      <a href="#kontakt" class="btn-primary hero-cta">Kontaktujte nás</a>
+      <a href="#pristup" class="btn-glass">Náš přístup</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Services Slider ────────────────────────────────────── -->
+<section class="services-section" id="sluzby" aria-label="Naše služby">
+  <div class="service-container" role="region" aria-live="polite">
+    <span>Stavební a zednické práce</span>
+    <span>Malířské a natěračské práce</span>
+    <span>Bourací práce</span>
+    <span>Fasády a zateplení</span>
+    <span>Sádrokartony</span>
+  </div>
+</section>
+
+<!-- ─── Náš přístup ────────────────────────────────────────── -->
+<section class="approach-section" id="pristup">
+  <div class="approach-inner">
+
+    <div class="approach-text">
+      <span class="section-eyebrow">Náš přístup</span>
+      <h2>Kvalita v každém detailu, preciznost v každém spoji.</h2>
+      <p>
+        Věříme, že úspěšná stavba začíná u vzájemné důvěry.
+        Naše procesy jsou transparentní, termíny závazné a materiály certifikované.
+        Specializujeme se na rezidenční i komerční výstavbu.
+        Důraz klademe na udržitelnost a moderní technologické postupy,
+        které zaručují dlouhou životnost vašich investic.
+      </p>
+    </div>
+
+    <div class="photo-wrapper">
+      <img
+        class="photo-main"
+        src="images/about-main.jpg"
+        alt="Stavba budovy"
+      />
+      <img
+        class="photo-inset"
+        src="images/about-inset.jpg"
+        alt="Detail řemeslné práce"
+      />
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── Naše služby ───────────────────────────────────────── -->
+<section class="services-detail-section" id="co-delame">
+  <div class="services-detail-inner">
+
+    <div class="photo-wrapper photo-wrapper--reversed">
+      <img
+        class="photo-main"
+        src="images/services-main.jpg"
+        alt="Řemeslná práce na stavbě"
+      />
+      <img
+        class="photo-inset"
+        src="images/services-inset.jpg"
+        alt="Fasáda a zateplení"
+      />
+    </div>
+
+    <div class="approach-text">
+      <span class="section-eyebrow">Co děláme</span>
+      <h2>Kompletní stavební služby pod jednou střechou.</h2>
+      <ul class="services-list">
+        <li><span class="service-num">01</span> Stavební a zednické práce</li>
+        <li><span class="service-num">02</span> Malířské a natěračské práce</li>
+        <li><span class="service-num">03</span> Bourací práce</li>
+        <li><span class="service-num">04</span> Fasády a zateplení</li>
+        <li><span class="service-num">05</span> Sádrokartony</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── Kalkulačka ─────────────────────────────────────────── -->
+<section class="calc-section" id="kalkulacka">
+  <div class="calc-inner">
+    <div class="calc-card">
+
+      <div>
+        <div class="contact-heading calc-card-heading">
+          <h3>Spočítejte si&nbsp;cenu</h3>
+          <p>Vyberte práci, zadejte rozměry a hned uvidíte orientační cenu.</p>
+        </div>
+
+        <div class="calc-result" aria-live="polite">
+          <p class="contact-label">Orientační cena</p>
+          <p class="calc-price" id="calc-price">—</p>
+          <ul class="calc-breakdown" id="calc-breakdown"></ul>
+          <label class="calc-option" style="margin-bottom:1rem">
+            <input type="checkbox" id="calc-vat" /> Zobrazit s DPH (12&nbsp;%)
+          </label>
+          <p class="calc-note" id="calc-note">Orientační odhad, přesnou cenu stanovíme po prohlídce.</p>
+          <div class="calc-actions">
+            <a href="mailto:info@mbkbau.cz" class="btn-primary" id="calc-mailto">Chci přesnou nabídku</a>
+            <a href="#kontakt" class="calc-link">Kontakt</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-steps">
+        <div>
+          <p class="contact-label">1 · Služba</p>
+          <div class="calc-chips" id="calc-services"></div>
+        </div>
+
+        <div>
+          <p class="contact-label">2 · Typ práce</p>
+          <div class="calc-options" id="calc-types"></div>
+        </div>
+
+        <div>
+          <p class="contact-label">3 · Rozměry</p>
+          <div class="calc-chips" id="calc-modes">
+            <button type="button" class="calc-chip is-active" data-mode="room">Rozměry místnosti</button>
+            <button type="button" class="calc-chip" data-mode="area">Zadám plochu (m²)</button>
+          </div>
+          <div class="calc-fields" id="calc-room">
+            <div class="calc-field"><label class="contact-label" for="c-l">Délka (m)</label><input type="number" id="c-l" min="0" step="0.1" value="4" /></div>
+            <div class="calc-field"><label class="contact-label" for="c-w">Šířka (m)</label><input type="number" id="c-w" min="0" step="0.1" value="3" /></div>
+            <div class="calc-field"><label class="contact-label" for="c-h">Výška (m)</label><input type="number" id="c-h" min="0" step="0.1" value="2.6" /></div>
+            <div class="calc-field"><label class="contact-label" for="c-win">Oken</label><input type="number" id="c-win" min="0" step="1" value="1" /></div>
+            <div class="calc-field"><label class="contact-label" for="c-door">Dveří</label><input type="number" id="c-door" min="0" step="1" value="1" /></div>
+          </div>
+          <div class="calc-fields calc-hidden" id="calc-area" style="grid-template-columns:1fr">
+            <div class="calc-field"><label class="contact-label" for="c-area">Plocha (m²)</label><input type="number" id="c-area" min="0" step="0.5" value="20" /></div>
+          </div>
+        </div>
+
+        <div>
+          <p class="contact-label">4 · Doplňky</p>
+          <div class="calc-options" id="calc-extras"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── Kontakt ────────────────────────────────────────────── -->
+<section class="contact-section" id="kontakt">
+  <div class="contact-inner">
+    <div class="contact-card">
+
+      <div class="contact-heading">
+        <h3>Spojte se s&nbsp;námi</h3>
+        <p>Máte dotaz nebo zájem o nezávaznou cenovou nabídku? Ozvěte se nám.</p>
+      </div>
+
+      <div class="contact-items">
+
+        <!-- Telefon -->
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.56 21 3 13.44 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="contact-label">Telefon</p>
+            <p class="contact-value">+420 XXX XXX XXX</p>
+          </div>
+        </div>
+
+        <!-- E-mail -->
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="contact-label">E-mail</p>
+            <p class="contact-value">info@mbkbau.cz</p>
+          </div>
+        </div>
+
+        <!-- Adresa -->
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="contact-label">Adresa</p>
+            <p class="contact-value">Nám. Kpt. Otmara Chlupa 822/1<br/>Znojmo 669 02</p>
+          </div>
+        </div>
+
+        <!-- Hodiny -->
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm0 18a8 8 0 110-16 8 8 0 010 16zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="contact-label">Provozní hodiny</p>
+            <p class="contact-value">Po – Pá: 07:00 – 16:00</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Mapa ────────────────────────────────────────────────── -->
+<section class="map-section" aria-label="Mapa – Znojmo">
+  <div id="leaflet-map"></div>
+</section>
+<script>
+  (function () {
+    // Mock ceny v Kč/m² bez DPH – upravte zde.
+    // area: walls | ceiling | floor | both (stěny+strop) | manual (zadává se m²)
+    var PRICING = {
+      services: [
+        { id: 'sdk', name: 'Sádrokartony', types: [
+          { name: 'Obklad stěn', area: 'walls', min: 450, max: 650, mat: 350, extras: [['Izolace', 150], ['Impregnované desky', 120], ['Tmelení Q3', 80]] },
+          { name: 'Podhled', area: 'ceiling', min: 600, max: 850, mat: 400, extras: [['Izolace', 150], ['Tmelení Q3', 80]] },
+          { name: 'Příčka', area: 'manual', min: 650, max: 900, mat: 450, extras: [['Izolace', 150], ['Impregnované desky', 120]] }
+        ]},
+        { id: 'mal', name: 'Malování', types: [
+          { name: 'Bílá malba 2× (stěny + strop)', area: 'both', min: 45, max: 65, mat: 15, extras: [['Penetrace', 12], ['Zakrývání', 10]] },
+          { name: 'Barevná malba (stěny)', area: 'walls', min: 60, max: 85, mat: 25, extras: [['Penetrace', 12]] }
+        ]},
+        { id: 'fas', name: 'Fasády a zateplení', types: [
+          { name: 'Zateplení EPS 100 mm', area: 'manual', min: 1100, max: 1400, mat: 650, extras: [['Lešení', 120], ['Silikonová omítka', 150]] },
+          { name: 'Zateplení minerální vatou', area: 'manual', min: 1400, max: 1800, mat: 900, extras: [['Lešení', 120]] }
+        ]},
+        { id: 'bou', name: 'Bourací práce', types: [
+          { name: 'Příčky', area: 'manual', min: 250, max: 400, mat: 0, extras: [['Odvoz suti', 80]] },
+          { name: 'Dlažba / obklady', area: 'floor', min: 150, max: 250, mat: 0, extras: [['Odvoz suti', 60]] }
+        ]},
+        { id: 'zed', name: 'Zednické práce', types: [
+          { name: 'Omítky', area: 'walls', min: 350, max: 500, mat: 120, extras: [] },
+          { name: 'Potěr podlahy', area: 'floor', min: 400, max: 550, mat: 180, extras: [] }
+        ]}
+      ],
+      minOrder: 5000,
+      vat: 0.12,
+      window: 1.5,
+      door: 1.8
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+    var state = { s: 0, t: 0, mode: 'room', extras: {}, material: true };
+
+    function svc() { return PRICING.services[state.s]; }
+    function typ() { return svc().types[state.t]; }
+    function num(id) { var v = parseFloat($(id).value); return isFinite(v) && v > 0 ? v : 0; }
+    function fmt(n) { return Math.round(n).toLocaleString('cs-CZ') + ' Kč'; }
+    function round100(n) { return Math.round(n / 100) * 100; }
+
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+    function renderChoices() {
+      $('calc-services').innerHTML = PRICING.services.map(function (s, i) {
+        return '<button type="button" class="calc-chip' + (i === state.s ? ' is-active' : '') + '" data-s="' + i + '">' + esc(s.name) + '</button>';
+      }).join('');
+
+      $('calc-types').innerHTML = svc().types.map(function (t, i) {
+        return '<label class="calc-option"><input type="radio" name="calc-type" value="' + i + '"' + (i === state.t ? ' checked' : '') + ' /> ' + esc(t.name) + '</label>';
+      }).join('');
+
+      var ex = typ().extras.map(function (e, i) {
+        return '<label class="calc-option"><input type="checkbox" data-e="' + i + '"' + (state.extras[i] ? ' checked' : '') + ' /> ' + esc(e[0]) + '<small>+' + e[1] + ' Kč/m²</small></label>';
+      }).join('');
+      ex += '<label class="calc-option"><input type="checkbox" id="calc-material"' + (state.material ? ' checked' : '') + ' /> Včetně materiálu</label>';
+      $('calc-extras').innerHTML = ex;
+
+      var manual = typ().area === 'manual';
+      $('calc-modes').classList.toggle('calc-hidden', manual);
+      var room = state.mode === 'room' && !manual;
+      $('calc-room').classList.toggle('calc-hidden', !room);
+      $('calc-area').classList.toggle('calc-hidden', room);
+      Array.prototype.forEach.call($('calc-modes').children, function (b) {
+        b.classList.toggle('is-active', b.getAttribute('data-mode') === state.mode);
+      });
+      // výška se nepoužije pro strop/podlahu
+      var needsH = typ().area === 'walls' || typ().area === 'both';
+      $('c-h').closest('.calc-field').classList.toggle('calc-hidden', !needsH);
+      var needsOpen = needsH;
+      $('c-win').closest('.calc-field').classList.toggle('calc-hidden', !needsOpen);
+      $('c-door').closest('.calc-field').classList.toggle('calc-hidden', !needsOpen);
+    }
+
+    function area() {
+      var t = typ();
+      if (t.area === 'manual' || state.mode === 'area') return num('c-area');
+      var l = num('c-l'), w = num('c-w'), h = num('c-h');
+      var floor = l * w, walls = 2 * (l + w) * h;
+      var open = num('c-win') * PRICING.window + num('c-door') * PRICING.door;
+      var wallNet = Math.max(0, walls - open);
+      if (t.area === 'ceiling' || t.area === 'floor') return floor;
+      if (t.area === 'walls') return wallNet;
+      return wallNet + floor; // both
+    }
+
+    function compute() {
+      var t = typ(), a = area();
+      if (!(a > 0)) return null;
+      var add = 0, names = [];
+      t.extras.forEach(function (e, i) { if (state.extras[i]) { add += e[1]; names.push(e[0]); } });
+      var mat = state.material ? t.mat : 0;
+      var lo = a * (t.min + mat + add), hi = a * (t.max + mat + add);
+      var k = $('calc-vat').checked ? 1 + PRICING.vat : 1;
+      lo = Math.max(lo, PRICING.minOrder); hi = Math.max(hi, PRICING.minOrder);
+      return { area: a, labour: [a * (t.min + add), a * (t.max + add)], mat: a * mat,
+               lo: round100(lo * k), hi: round100(hi * k), vat: k > 1, extras: names };
+    }
+
+    function update() {
+      var r = compute(), price = $('calc-price'), bd = $('calc-breakdown');
+      if (!r) {
+        price.textContent = '—';
+        bd.innerHTML = '';
+        $('calc-note').textContent = 'Zadejte kladné rozměry nebo plochu, abychom mohli cenu spočítat.';
+        $('calc-mailto').href = 'mailto:info@mbkbau.cz?subject=' + encodeURIComponent('Poptávka – ' + svc().name);
+        return;
+      }
+      $('calc-note').textContent = 'Orientační odhad, přesnou cenu stanovíme po prohlídce.' +
+        (r.vat ? '' : ' Ceny jsou bez DPH.');
+      price.textContent = 'cca ' + r.lo.toLocaleString('cs-CZ') + ' – ' + r.hi.toLocaleString('cs-CZ') + ' Kč';
+      var k = r.vat ? 1 + PRICING.vat : 1;
+      bd.innerHTML =
+        '<li><span>Plocha</span><strong>' + r.area.toLocaleString('cs-CZ', { maximumFractionDigits: 1 }) + ' m²</strong></li>' +
+        '<li><span>Práce' + (r.extras.length ? ' a doplňky' : '') + '</span><strong>' + fmt(r.labour[0] * k) + ' – ' + fmt(r.labour[1] * k) + '</strong></li>' +
+        '<li><span>Materiál</span><strong>' + (state.material ? fmt(r.mat * k) : 'ne') + '</strong></li>';
+
+      var body = [
+        'Dobrý den,', '',
+        'poptávám: ' + svc().name + ' – ' + typ().name,
+        'Plocha: ' + r.area.toLocaleString('cs-CZ', { maximumFractionDigits: 1 }) + ' m²',
+        'Doplňky: ' + (r.extras.length ? r.extras.join(', ') : 'žádné'),
+        'Materiál: ' + (state.material ? 'ano' : 'ne'),
+        'Orientační cena z kalkulačky: ' + r.lo.toLocaleString('cs-CZ') + ' – ' + r.hi.toLocaleString('cs-CZ') + ' Kč ' + (r.vat ? 's DPH' : 'bez DPH'),
+        '', 'Prosím o přesnou nabídku.'
+      ].join('\n');
+      $('calc-mailto').href = 'mailto:info@mbkbau.cz?subject=' + encodeURIComponent('Poptávka – ' + svc().name) +
+        '&body=' + encodeURIComponent(body);
+    }
+
+    function refresh() { renderChoices(); update(); }
+
+    var card = document.querySelector('.calc-card');
+    card.addEventListener('click', function (e) {
+      var b = e.target.closest('.calc-chip');
+      if (!b) return;
+      if (b.hasAttribute('data-s')) { state.s = +b.getAttribute('data-s'); state.t = 0; state.extras = {}; refresh(); }
+      else if (b.hasAttribute('data-mode')) { state.mode = b.getAttribute('data-mode'); refresh(); }
+    });
+    card.addEventListener('change', function (e) {
+      var el = e.target;
+      if (el.name === 'calc-type') { state.t = +el.value; state.extras = {}; refresh(); }
+      else if (el.hasAttribute('data-e')) { state.extras[el.getAttribute('data-e')] = el.checked; update(); }
+      else if (el.id === 'calc-material') { state.material = el.checked; update(); }
+      else update();
+    });
+    card.addEventListener('input', update);
+
+    refresh();
+  })();
+</script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+  (function () {
+    var LAT = 48.8559, LON = 16.0493;
+
+    var map = L.map('leaflet-map', {
+      center: [LAT, LON],
+      zoom: 16,
+      scrollWheelZoom: false
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> přispěvatelé',
+      maxZoom: 19
+    }).addTo(map);
+
+    var pinIcon = L.divIcon({
+      className: '',
+      html: '<div style="position:relative;width:40px;height:52px;">' +
+              '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);' +
+                'width:36px;height:36px;border-radius:50%;background:#F04F12;opacity:0.25;' +
+                'animation:leaflet-ping 2s ease-out infinite;"></div>' +
+              '<svg width="40" height="52" viewBox="0 0 40 52" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                '<path d="M20 0C8.954 0 0 8.954 0 20c0 14.667 20 32 20 32S40 34.667 40 20C40 8.954 31.046 0 20 0z" fill="#F04F12"/>' +
+                '<circle cx="20" cy="20" r="7" fill="white"/>' +
+              '</svg>' +
+            '</div>',
+      iconSize:   [40, 52],
+      iconAnchor: [20, 52],
+      popupAnchor:[0, -54]
+    });
+
+    L.marker([LAT, LON], { icon: pinIcon })
+      .addTo(map)
+      .bindPopup('<strong>MBK BAU</strong><br>Nám. Kpt. Otmara Chlupa 822/1<br>Znojmo 669 02');
+
+    // inject keyframes for the pulse inside the divIcon
+    var style = document.createElement('style');
+    style.textContent = '@keyframes leaflet-ping{0%{transform:translate(-50%,-50%) scale(1);opacity:.6}70%{transform:translate(-50%,-50%) scale(2.4);opacity:0}100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}}';
+    document.head.appendChild(style);
+  })();
+</script>
+
+<!-- ─── Footer ─────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+
+    <div class="footer-brand">
+      <a href="#" class="logo-link">
+        <img src="starting-sources/mbkbau-white.png" alt="MBK BAU" class="logo-img logo-img--footer" />
+      </a>
+    </div>
+
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h4>Odkazy</h4>
+        <ul>
+          <li><a href="#pristup">Náš přístup</a></li>
+          <li><a href="#co-delame">Služby</a></li>
+          <li><a href="#kalkulacka">Kalkulačka</a></li>
+          <li><a href="#kontakt">Kontakt</a></li>
+          <li><a href="#">Ochrana údajů</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Kontakt</h4>
+        <div class="footer-contact-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.56 21 3 13.44 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/>
+          </svg>
+          +420 XXX XXX XXX
+        </div>
+        <div class="footer-contact-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
+          info@mbkbau.cz
+        </div>
+        <div class="footer-contact-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/>
+          </svg>
+          Znojmo 669 02
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="footer-bottom">© 2026 MBK BAU. Všechna práva vyhrazena.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script>
+  (function () {
+    var root = document.documentElement;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!window.gsap || !window.ScrollTrigger || !window.SplitText || reduce) {
+      root.classList.remove('js');
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger, SplitText);
+
+    var started = false;
+    function start() {
+      if (started) return;
+      started = true;
+
+      var mm = gsap.matchMedia();
+
+      mm.add('(prefers-reduced-motion: no-preference)', function () {
+        var q = function (s) { return document.querySelector(s); };
+        var qa = function (s) { return gsap.utils.toArray(s); };
+
+        /* ── Hero intro ── */
+        var h1 = q('.hero h1');
+        var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+        gsap.set('.hero-content', { visibility: 'visible' });
+        tl.from('.hero-bg img', { scale: 1.15, duration: 2, ease: 'power2.out' }, 0)
+          .from('.hero-eyebrow', { y: 20, autoAlpha: 0, duration: 0.8 }, 0.2);
+        SplitText.create(h1, {
+          type: 'lines,words',
+          mask: 'lines',
+          autoSplit: true,
+          onSplit: function (self) {
+            return gsap.from(self.words, {
+              yPercent: 110, duration: 1, stagger: 0.08, ease: 'power4.out', delay: 0.4
+            });
+          }
+        });
+        tl.from(['.hero-subtitle', '.hero-ctas'], { y: 24, autoAlpha: 0, duration: 0.9, stagger: 0.15 }, 1.0);
+
+        /* ── Section headings ── */
+        qa('.approach-text h2, .calc-card h3, .contact-card h3').forEach(function (el) {
+          var parent = el.closest('.approach-text, .calc-card-heading, .contact-heading') || el.parentElement;
+          var sib = parent.querySelectorAll('.section-eyebrow, h2 ~ p, h3 ~ p');
+          SplitText.create(el, {
+            type: 'lines',
+            mask: 'lines',
+            autoSplit: true,
+            onSplit: function (self) {
+              return gsap.from(self.lines, {
+                yPercent: 110, duration: 1, stagger: 0.12, ease: 'power4.out',
+                scrollTrigger: { trigger: el, start: 'top 80%', toggleActions: 'play none none reverse' }
+              });
+            }
+          });
+          if (sib.length) {
+            gsap.from(sib, {
+              y: 20, autoAlpha: 0, duration: 0.9, stagger: 0.12, delay: 0.15, ease: 'power3.out',
+              scrollTrigger: { trigger: el, start: 'top 80%', toggleActions: 'play none none reverse' }
+            });
+          }
+        });
+
+        /* ── Photo compositions ── */
+        qa('.photo-wrapper').forEach(function (wrap) {
+          var main = wrap.querySelector('.photo-main');
+          var inset = wrap.querySelector('.photo-inset');
+          var rev = wrap.classList.contains('photo-wrapper--reversed');
+          var t = gsap.timeline({
+            defaults: { ease: 'power3.out' },
+            scrollTrigger: { trigger: wrap, start: 'top 80%', toggleActions: 'play none none reverse' }
+          });
+          t.fromTo(main, { clipPath: 'inset(100% 0 0 0)', scale: 1.1 },
+                         { clipPath: 'inset(0% 0 0 0)', scale: 1, duration: 1.2, ease: 'power4.out' });
+          if (inset) {
+            t.from(inset, { x: rev ? -60 : 60, autoAlpha: 0, duration: 1 }, 0.35);
+          }
+        });
+
+        /* ── Services list ── */
+        var list = q('.services-list');
+        if (list) {
+          gsap.from('.services-list li', {
+            x: -30, autoAlpha: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out',
+            scrollTrigger: { trigger: list, start: 'top 85%', toggleActions: 'play none none reverse' }
+          });
+        }
+
+        /* ── Cards ── */
+        qa('.calc-card, .contact-card').forEach(function (card) {
+          gsap.from(card, {
+            y: 40, autoAlpha: 0, duration: 1, ease: 'power3.out',
+            scrollTrigger: { trigger: card, start: 'top 85%', toggleActions: 'play none none reverse' }
+          });
+        });
+        if (q('.contact-items')) {
+          gsap.from('.contact-item', {
+            y: 20, autoAlpha: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out',
+            scrollTrigger: { trigger: '.contact-items', start: 'top 85%', toggleActions: 'play none none reverse' }
+          });
+        }
+      });
+
+      /* ── Parallax (desktop only) ── */
+      mm.add('(prefers-reduced-motion: no-preference) and (min-width: 768px)', function () {
+        gsap.to('.hero-bg img', {
+          yPercent: 15, ease: 'none',
+          scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+        });
+        gsap.utils.toArray('.photo-wrapper').forEach(function (wrap) {
+          var inset = wrap.querySelector('.photo-inset');
+          if (!inset) return;
+          gsap.to(inset, {
+            y: -40, ease: 'none',
+            scrollTrigger: { trigger: wrap, start: 'top bottom', end: 'bottom top', scrub: true }
+          });
+        });
+      });
+
+      window.addEventListener('load', function () { ScrollTrigger.refresh(); });
+    }
+
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(start);
+    // safety net: never leave hero hidden
+    setTimeout(start, 3000);
+  })();
+</script>
+
+</body>
+</html>

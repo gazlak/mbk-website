@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="cs"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>STRUCT Construction | Realizace staveb</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#e2e2e5",
+                    "on-primary-fixed": "#3a0b00",
+                    "primary-fixed-dim": "#ffb59e",
+                    "secondary-fixed-dim": "#ffb59e",
+                    "on-surface-variant": "#5b4038",
+                    "surface-variant": "#e2e2e5",
+                    "background": "#ffffff",
+                    "secondary-container": "#F04F12",
+                    "tertiary-fixed": "#ffdbd0",
+                    "surface-container-high": "#e8e8ea",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed-variant": "#852400",
+                    "on-tertiary-container": "#fffbff",
+                    "surface": "#ffffff",
+                    "surface-container-low": "#f3f3f6",
+                    "primary-fixed": "#ffdbd0",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#ffdbd0",
+                    "tertiary": "#9e4224",
+                    "surface-dim": "#dadadc",
+                    "outline": "#8f7067",
+                    "on-secondary-container": "#742407",
+                    "outline-variant": "#e4beb3",
+                    "tertiary-container": "#ffdbd0",
+                    "on-error": "#ffffff",
+                    "secondary": "#9e4224",
+                    "on-primary-fixed-variant": "#852400",
+                    "on-secondary-fixed-variant": "#7e2b0e",
+                    "inverse-on-surface": "#f0f0f3",
+                    "on-tertiary-fixed": "#3a0b00",
+                    "inverse-primary": "#ffb59e",
+                    "surface-container": "#eeeef0",
+                    "on-error-container": "#93000a",
+                    "on-primary-container": "#fffbff",
+                    "inverse-surface": "#2f3133",
+                    "primary": "#F04F12",
+                    "on-surface": "#1a1c1e",
+                    "on-background": "#1a1c1e",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed-dim": "#ffb59e",
+                    "primary-container": "#F04F12",
+                    "surface-bright": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "surface-tint": "#F04F12",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#3a0b00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.5rem",
+                    "lg": "0.5rem",
+                    "xl": "1rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Montserrat"],
+                    "body": ["Montserrat"],
+                    "label": ["Montserrat"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        @keyframes rotate-services {
+            0% { opacity: 0; transform: translateY(10px); }
+            5% { opacity: 1; transform: translateY(0); }
+            20% { opacity: 1; transform: translateY(0); }
+            25% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 0; }
+        }
+
+        .service-container span {
+            animation: rotate-services 15s infinite;
+        }
+        .service-container span:nth-child(1) { animation-delay: 0s; }
+        .service-container span:nth-child(2) { animation-delay: 3s; }
+        .service-container span:nth-child(3) { animation-delay: 6s; }
+        .service-container span:nth-child(4) { animation-delay: 9s; }
+        .service-container span:nth-child(5) { animation-delay: 12s; }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm">
+<div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+<div class="text-2xl font-black tracking-tighter text-slate-900 font-headline">STRUCT</div>
+<div class="hidden md:flex items-center gap-8 font-headline font-bold tracking-tight">
+<a class="text-[#F04F12] border-b-2 border-[#F04F12] transition-colors duration-300" href="#">Projekty</a>
+<a class="text-slate-600 hover:text-[#F04F12] transition-colors duration-300" href="#">Služby</a>
+<a class="text-slate-600 hover:text-[#F04F12] transition-colors duration-300" href="#">O nás</a>
+<a class="text-slate-600 hover:text-[#F04F12] transition-colors duration-300" href="#">Reference</a>
+</div>
+<button class="bg-[#F04F12] text-on-primary px-6 py-2.5 rounded-lg font-headline font-bold text-sm tracking-tight active:scale-95 duration-200 transition-all shadow-lg shadow-[#F04F12]/20">
+            Kontaktujte nás
+        </button>
+</div>
+<div class="bg-slate-100 h-[1px]"></div>
+</nav>
+<!-- Hero Section -->
+<section class="relative h-[921px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Main construction project" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD_47FEdOyrpVBsk2oHNSLjhR_5Y2a3naZ5_aOQ3PLuCTkh0UZR_MZx_gQEVfjrudvU87cR_E4il0eGYJ78yNCnowNAlybnqqRJuUoVgE4ktgacRa4BYIFR7jW-YnmQzUkLn_rpZVOg8P_SmA7Zh4Ctm9-qHNvwgAwDgA6Lqfx9hJpDStPVxRbgSRvXY_AnZ6QW6It_L23H4ryAVN4dIgKVriS8SSHYFUjsxE6W-U5znyHmTQ6jj1l95nLDi4n03-tXs-Wm23ytMYD"/>
+<div class="absolute inset-0 bg-gradient-to-r from-on-surface/90 via-on-surface/40 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto px-8 w-full">
+<div class="max-w-2xl space-y-6">
+<span class="inline-block text-[#F04F12] font-label font-bold tracking-widest text-sm uppercase">Prémiové Stavební Služby</span>
+<h1 class="text-white font-headline text-6xl md:text-8xl font-black leading-[0.9] tracking-tighter">
+                STAVÍME <br/><span class="text-[#F04F12]">BUDOUCNOST</span>
+</h1>
+<p class="text-white/80 text-lg md:text-xl max-w-lg font-body leading-relaxed">
+                Precizní inženýrství a moderní materiály pro projekty, které definují krajinu. Od základů po poslední detail.
+            </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="bg-[#F04F12] hover:brightness-110 text-on-primary px-8 py-4 rounded-lg font-headline font-bold tracking-tight transition-all active:scale-95 shadow-xl shadow-[#F04F12]/30">
+                    Kontaktujte nás
+                </button>
+<button class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-lg font-headline font-bold tracking-tight hover:bg-white/20 transition-all">
+                    Naše reference
+                </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Services Section (One at a time) -->
+<section class="py-16 bg-surface-container-low overflow-hidden">
+<div class="max-w-7xl mx-auto px-8 flex justify-center items-center">
+<div class="service-container relative h-12 w-full flex justify-center items-center">
+<span class="absolute inset-0 flex items-center justify-center text-3xl font-headline font-black text-on-surface uppercase tracking-tighter">
+                Stavební a zednické práce
+            </span>
+<span class="absolute inset-0 flex items-center justify-center text-3xl font-headline font-black text-on-surface uppercase tracking-tighter">
+                Malířské a natěračské práce
+            </span>
+<span class="absolute inset-0 flex items-center justify-center text-3xl font-headline font-black text-on-surface uppercase tracking-tighter">
+                Bourací práce
+            </span>
+<span class="absolute inset-0 flex items-center justify-center text-3xl font-headline font-black text-on-surface uppercase tracking-tighter">
+                Fasády a zateplení
+            </span>
+<span class="absolute inset-0 flex items-center justify-center text-3xl font-headline font-black text-on-surface uppercase tracking-tighter">
+                Sádrokartony
+            </span>
+</div>
+</div>
+</section>
+<!-- Content Section (Náš Přístup - Full Width with Photo) -->
+<section class="py-24 overflow-hidden">
+<div class="max-w-[1440px] mx-auto flex flex-col lg:flex-row items-center">
+<div class="w-full lg:w-1/2 px-8 lg:pl-16 lg:pr-12 space-y-8 mb-12 lg:mb-0">
+<div class="space-y-4">
+<span class="text-[#F04F12] font-label font-bold tracking-widest text-sm uppercase">Náš Přístup</span>
+<h2 class="text-5xl font-headline font-black tracking-tighter text-on-surface leading-tight">
+                    Kvalita v každém detailu, <br/>preciznost v každém spoji.
+                </h2>
+<p class="text-on-surface-variant text-lg leading-relaxed max-w-xl">
+                    Věříme, že úspěšná stavba začíná u vzájemné důvěry. Naše procesy jsou transparentní, termíny závazné a materiály certifikované. Specializujeme se na rezidenční i komerční výstavbu. Důraz klademe na udržitelnost a moderní technologické postupy, které zaručují dlouhou životnost vašich investic.
+                </p>
+</div>
+</div>
+<div class="w-full lg:w-1/2 h-[500px] lg:h-[600px]">
+<img alt="Construction precision" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnrGjI6mG1k7p9m8_X-B0Xf5K7rO-u3l6v_G5C8S0A1F2E3D4B5C6A7B8C9D0E1F2G3H4I5J6K7L8M9N0O1P2Q3R4S5T6U7V8W9X0Y1Z2"/>
+</div>
+</div>
+</section>
+<!-- Contact Section (Spojte se s námi - Full Width) -->
+<section class="py-24 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-8">
+<div class="bg-white shadow-2xl shadow-on-surface/5 p-12 rounded-xl border border-outline-variant/15">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<div class="md:col-span-1">
+<h3 class="text-4xl font-headline font-black tracking-tighter mb-4 text-[#F04F12]">Spojte se s námi</h3>
+<p class="text-on-surface-variant leading-relaxed">Máte dotaz nebo zájem o nezávaznou cenovou nabídku? Ozvěte se nám.</p>
+</div>
+<div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-8">
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 bg-[#F04F12]/10 rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[#F04F12]" data-icon="call">call</span>
+</div>
+<div>
+<p class="text-xs font-label font-bold text-on-surface-variant uppercase tracking-widest mb-1">Telefon</p>
+<p class="text-lg font-headline font-bold">+420 123 456 789</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 bg-[#F04F12]/10 rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[#F04F12]" data-icon="mail">mail</span>
+</div>
+<div>
+<p class="text-xs font-label font-bold text-on-surface-variant uppercase tracking-widest mb-1">E-mail</p>
+<p class="text-lg font-headline font-bold">info@struct.cz</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 bg-[#F04F12]/10 rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[#F04F12]" data-icon="location_on">location_on</span>
+</div>
+<div>
+<p class="text-xs font-label font-bold text-on-surface-variant uppercase tracking-widest mb-1">Adresa</p>
+<p class="text-lg font-headline font-bold">Stavební 123, 110 00 Praha 1</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 bg-[#F04F12]/10 rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[#F04F12]" data-icon="schedule">schedule</span>
+</div>
+<div>
+<p class="text-xs font-label font-bold text-on-surface-variant uppercase tracking-widest mb-1">Provozní hodiny</p>
+<p class="text-lg font-headline font-bold">Po - Pá: 08:00 - 17:00</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Map Section -->
+<section class="w-full h-[500px] relative bg-surface-container-low">
+<div class="absolute inset-0 grayscale opacity-80 hover:grayscale-0 transition-all duration-700">
+<img alt="Map location" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcd98Y4ZlG7kKp4KvFiWXWmMvo1Cdg5-KkBbQbrQg4BS5JPJl-FQGgz6w4yA8W7fQIQ8FeqpK7aMLSphHW-85U2EvHXRX3bzYFgjzSOfOh1Hp07a91za20RQo_8BFeZfOaL6UJSwYTgKEJTPwAPA2U4IhoPRFsppJBLP3CpGb2bhH-fuJHVznxN1Q24-6lDaGye1xbj5KmeM2QfayF-fQX-z59VcaDb1WwNfLn6KBym1nhty74dOWDFSEHBpWw8etYtKR5n4_NsIhn"/>
+</div>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="relative">
+<div class="w-12 h-12 bg-[#F04F12] rounded-full animate-ping absolute opacity-20"></div>
+<div class="w-12 h-12 bg-[#F04F12] rounded-full flex items-center justify-center relative shadow-xl">
+<span class="material-symbols-outlined text-white" data-icon="construction">construction</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-white border-t border-slate-200">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center px-8 py-12 max-w-7xl mx-auto gap-8">
+<div class="space-y-4">
+<div class="text-2xl font-black text-slate-900 font-headline">STRUCT</div>
+<p class="text-slate-500 max-w-xs font-body text-sm leading-relaxed">
+                © 2024 STRUCT Construction. Všechna práva vyhrazena.
+            </p>
+</div>
+<div class="flex flex-col md:flex-row gap-12">
+<div class="space-y-2">
+<p class="text-on-surface font-bold text-sm uppercase tracking-widest">Odkazy</p>
+<div class="flex flex-col gap-1 text-slate-500 font-body text-sm">
+<a class="hover:underline hover:text-[#F04F12] transition-colors" href="#">Ochrana údajů</a>
+<a class="hover:underline hover:text-[#F04F12] transition-colors" href="#">Podmínky užití</a>
+<a class="hover:underline hover:text-[#F04F12] transition-colors" href="#">Kontakt</a>
+</div>
+</div>
+<div class="space-y-3">
+<p class="text-on-surface font-bold text-sm uppercase tracking-widest">Kontakt</p>
+<div class="text-slate-500 font-body text-sm space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-[#F04F12]">call</span>
+<p>+420 123 456 789</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-[#F04F12]">mail</span>
+<p>info@struct.cz</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-[#F04F12]">business</span>
+<p>STRUCT s.r.o.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</footer>
+</body></html>
