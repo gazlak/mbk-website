@@ -28,7 +28,7 @@
     }
 
     html { scroll-behavior: smooth; overflow-x: clip; }
-    section[id] { scroll-margin-top: 4.5rem; }
+    section[id] { scroll-margin-top: 6.5rem; }
 
     body {
       font-family: 'Montserrat', sans-serif;
@@ -44,6 +44,46 @@
       max-width: 1280px;
       margin: 0 auto;
       padding: 0 2rem;
+    }
+
+    /* ─── Top info bar ─────────────────────────────────────────── */
+    .topbar {
+      background: var(--on-surface);
+      color: rgba(255,255,255,0.8);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem 1.75rem;
+      flex-wrap: wrap;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0.5rem 2rem;
+    }
+
+    .topbar-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: inherit;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+
+    .topbar-item svg { width: 0.9rem; height: 0.9rem; fill: var(--primary); flex-shrink: 0; }
+    a.topbar-item:hover { color: #fff; }
+    .topbar-extra { display: none; }
+
+    @media (min-width: 768px) {
+      .topbar-inner { justify-content: flex-start; }
+      .topbar-extra { display: inline-flex; }
+      .topbar-hours { margin-left: auto; }
     }
 
     /* ─── Header / Nav ─────────────────────────────────────────── */
@@ -187,6 +227,7 @@
       display: flex;
       align-items: center;
       overflow: hidden;
+      touch-action: pan-y;
     }
 
     .hero-bg {
@@ -195,22 +236,36 @@
       z-index: 0;
     }
 
-    .hero-bg img {
+    .hero-bg-img {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    .hero-bg-img.is-active {
+      opacity: 1;
+      animation: hero-kenburns 7s ease-out both;
+    }
+    @keyframes hero-kenburns {
+      from { transform: scale(1.06); }
+      to   { transform: scale(1); }
     }
 
     .hero-bg::after {
       content: '';
+      z-index: 1;
       position: absolute;
       inset: 0;
-      background: linear-gradient(
+      background: linear-gradient(to top, rgba(28,27,27,0.7) 0%, rgba(28,27,27,0) 28%),
+      linear-gradient(
         105deg,
         rgba(28,27,27,0.88) 0%,
-        rgba(28,27,27,0.55) 50%,
-        rgba(28,27,27,0.1) 100%
+        rgba(28,27,27,0.64) 50%,
+        rgba(28,27,27,0.25) 100%
       );
     }
 
@@ -221,8 +276,23 @@
       z-index: 1;
       max-width: 1280px;
       margin: 0 auto;
-      padding: 8rem 2rem 4rem;
+      padding: 8rem 2rem 8rem;
       width: 100%;
+      display: grid;
+    }
+
+    .hero-slide {
+      grid-area: 1 / 1;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(16px);
+      transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s linear 0.4s;
+    }
+    .hero-slide.is-active {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s, visibility 0s;
     }
 
     .hero-eyebrow {
@@ -231,7 +301,7 @@
       font-weight: 700;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--primary);
+      color: var(--hero-accent);
       margin-bottom: 1.25rem;
     }
 
@@ -245,7 +315,18 @@
       max-width: 12ch;
     }
 
-    .hero h1 .accent { color: var(--primary); }
+    .hero h1 .accent { color: var(--hero-accent); }
+
+    /* barevné odlišení oborů */
+    .hero {
+      --hero-accent: var(--primary);
+      --hero-on: var(--on-primary);
+      --hero-glow: rgba(240,79,18,0.28);
+    }
+    .hero-slide:nth-child(2), .hero-dot[data-i="1"] { --hero-accent: #4DB8F0; --hero-on: #06202e; --hero-glow: rgba(77,184,240,0.3); }
+    .hero-slide:nth-child(3), .hero-dot[data-i="2"] { --hero-accent: #F6C21B; --hero-on: #2a2100; --hero-glow: rgba(246,194,27,0.3); }
+    .hero-slide:nth-child(4), .hero-dot[data-i="3"] { --hero-accent: #2EC4B6; --hero-on: #032a26; --hero-glow: rgba(46,196,182,0.3); }
+    .hero-dot[data-i="0"] { --hero-accent: var(--primary); }
 
     .hero-subtitle {
       font-size: clamp(1rem, 2vw, 1.2rem);
@@ -281,7 +362,106 @@
     }
     .btn-glass:hover { background: rgba(255,255,255,0.22); }
 
-    .btn-primary.hero-cta { padding: 0.9rem 2rem; font-size: 0.875rem; }
+    .btn-primary.hero-cta {
+      padding: 0.9rem 2rem; font-size: 0.875rem;
+      background: var(--hero-accent); color: var(--hero-on);
+      box-shadow: 0 8px 40px var(--hero-glow);
+    }
+
+    /* Hero navigation */
+    .hero-nav {
+      position: absolute;
+      left: 0; right: 0; bottom: 2.25rem;
+      z-index: 2;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .hero-arrows { display: flex; gap: 0.75rem; flex-shrink: 0; }
+    .hero-arrow {
+      width: 48px; height: 48px;
+      padding: 0;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    .hero-dots {
+      display: flex;
+      flex: 1;
+      gap: 1.25rem;
+      list-style: none;
+      margin: 0; padding: 0;
+      align-items: flex-end;
+    }
+    .hero-dot {
+      flex: 1;
+      max-width: 260px;
+      background: none;
+      border: 0;
+      padding: 1rem 0 0;
+      text-align: left;
+      cursor: pointer;
+      color: rgba(255,255,255,0.5);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      position: relative;
+      transition: color 0.3s, font-size 0.3s;
+    }
+    .hero-dot:hover { color: rgba(255,255,255,0.85); }
+    .hero-dot.is-active { color: #fff; font-size: 1.125rem; font-weight: 800; }
+    .hero-dot::before, .hero-dot::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      height: 3px;
+      width: 100%;
+      border-radius: 2px;
+    }
+    .hero-dot::before { background: rgba(255,255,255,0.25); transition: height 0.3s, background 0.3s; }
+    .hero-dot.is-active::before { background: var(--hero-accent); height: 5px; }
+    .hero-dot::after {
+      background: rgba(255,255,255,0.85);
+      transform: scaleX(0);
+      transform-origin: left;
+      height: 5px;
+    }
+    .hero-dots.is-playing .hero-dot.is-active::after {
+      animation: hero-progress 7s linear both;
+    }
+    .hero.is-paused .hero-dots .hero-dot.is-active::after { animation-play-state: paused; }
+    @keyframes hero-progress {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+    .hero-dot-num { color: var(--hero-accent); margin-right: 0.5em; }
+
+    @media (max-width: 767px) {
+      .hero-content { padding: 6.5rem 1.25rem 7rem; }
+      .hero-nav { padding: 0 1.25rem; bottom: 1.5rem; gap: 1rem; justify-content: space-between; }
+      .hero-arrow { width: 42px; height: 42px; }
+      .hero-dots { flex: 0 1 auto; min-width: 0; gap: 0.5rem; }
+      .hero-dot { flex: 0 0 auto; width: 26px; padding-top: 0.75rem; font-size: 0; white-space: nowrap; }
+      .hero-dot .hero-dot-num { font-size: 0; }
+      .hero-dot.is-active { width: auto; min-width: 26px; font-size: 0.95rem; }
+      .hero-dot.is-active .hero-dot-num { font-size: 0.95rem; }
+      .hero-dot::before, .hero-dot::after { height: 3px; }
+      .hero-dot.is-active::before, .hero-dot.is-active::after { height: 4px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-bg-img { transition-duration: 0.3s; }
+      .hero-bg-img.is-active { animation: none; }
+      .hero-slide, .hero-slide.is-active { transform: none; transition-duration: 0.3s; transition-delay: 0s; }
+    }
 
     /* ─── Services Slider ──────────────────────────────────────── */
     .services-section {
@@ -292,9 +472,9 @@
 
     @keyframes rotate-services {
       0%   { opacity: 0; transform: translateY(12px); }
-      5%   { opacity: 1; transform: translateY(0); }
-      20%  { opacity: 1; transform: translateY(0); }
-      25%  { opacity: 0; transform: translateY(-12px); }
+      2%   { opacity: 1; transform: translateY(0); }
+      9%   { opacity: 1; transform: translateY(0); }
+      10%  { opacity: 0; transform: translateY(-12px); }
       100% { opacity: 0; }
     }
 
@@ -318,8 +498,11 @@
       text-transform: uppercase;
       color: var(--on-surface);
       opacity: 0;
-      animation: rotate-services 15s infinite;
-      white-space: nowrap;
+      animation: rotate-services 30s infinite;
+      white-space: normal;
+      text-align: center;
+      line-height: 1.1;
+      padding: 0 1rem;
     }
 
     .service-container span:nth-child(1) { animation-delay: 0s; }
@@ -327,11 +510,16 @@
     .service-container span:nth-child(3) { animation-delay: 6s; }
     .service-container span:nth-child(4) { animation-delay: 9s; }
     .service-container span:nth-child(5) { animation-delay: 12s; }
+    .service-container span:nth-child(6) { animation-delay: 15s; }
+    .service-container span:nth-child(7) { animation-delay: 18s; }
+    .service-container span:nth-child(8) { animation-delay: 21s; }
+    .service-container span:nth-child(9) { animation-delay: 24s; }
+    .service-container span:nth-child(10) { animation-delay: 27s; }
 
     /* ─── Náš přístup ──────────────────────────────────────────── */
     .approach-section {
       padding: 6rem 2rem;
-      background: var(--surface);
+      background: var(--surface-low);
     }
 
     .approach-inner {
@@ -399,7 +587,7 @@
     /* ─── Naše služby ──────────────────────────────────────────── */
     .services-detail-section {
       padding: 6rem 2rem;
-      background: var(--surface-low);
+      background: var(--surface);
     }
 
     .services-detail-inner {
@@ -430,21 +618,102 @@
     }
 
     .services-list li {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.1rem 0;
       border-bottom: 1px solid var(--surface-high);
       font-size: 1.0625rem;
       font-weight: 700;
       letter-spacing: -0.01em;
       color: var(--on-surface);
       transition: color 0.2s;
+      position: relative;
     }
 
     .services-list li:first-child { border-top: 1px solid var(--surface-high); }
 
-    .services-list li:hover { color: var(--primary); }
+    .service-btn {
+      all: unset;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+      padding: 1.1rem 0;
+      cursor: pointer;
+    }
+    .service-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    .services-list li::before {
+      content: '';
+      position: absolute;
+      left: -1rem;
+      top: 50%;
+      width: 3px;
+      height: 0;
+      background: var(--primary);
+      transform: translateY(-50%);
+      transition: height 0.25s;
+    }
+    .services-list li.is-active { color: var(--primary); }
+    .services-list li.is-active::before { height: 1.4rem; }
+
+    .service-desc {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.35s ease;
+    }
+    .service-desc > div { overflow: hidden; }
+    .services-list li.is-active .service-desc { grid-template-rows: 1fr; }
+    .service-desc p {
+      font-size: 0.95rem;
+      font-weight: 400;
+      line-height: 1.7;
+      letter-spacing: 0;
+      color: var(--on-surface-variant);
+      padding-top: 0.25rem;
+    }
+    .service-desc img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border-radius: var(--radius);
+      display: block;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .service-panel { display: none; }
+
+    @media (min-width: 768px) {
+      .service-desc { display: none; }
+      .service-panel {
+        display: block;
+        margin-top: 2rem;
+        padding-left: 1.25rem;
+        border-left: 3px solid var(--primary);
+        min-height: 9rem;
+      }
+      .service-panel h3 {
+        font-size: 1.25rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+        color: var(--on-surface);
+      }
+      .service-panel p {
+        font-size: 1rem;
+        line-height: 1.75;
+        color: var(--on-surface-variant);
+      }
+      .services-detail-inner { align-items: start; }
+      .services-visual {
+        position: sticky;
+        top: 7rem;
+      }
+      .services-visual .photo-main { height: 420px; }
+      .services-visual .service-panel {
+        margin-top: 1.75rem;
+        margin-left: 30px;
+        min-height: 8rem;
+      }
+    }
 
     .service-num {
       font-size: 0.7rem;
@@ -476,28 +745,17 @@
 
     .refs-section .approach-text h2 { color: #fff; margin-bottom: 0; }
 
-    .refs-stats { display: flex; gap: 2.5rem; flex-wrap: wrap; }
-
-    .refs-stat-num {
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 1;
-      color: #fff;
-      margin-bottom: 0.5rem;
-    }
-
-    .refs-stat .contact-label { color: rgba(255,255,255,0.55); margin-bottom: 0; }
-
     /* mobile: swipe carousel */
     .refs-grid {
       display: flex;
       gap: 1rem;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      margin: 0 -2rem;
-      padding: 0 2rem;
-      scroll-padding: 0 2rem;
+      /* full-bleed: od levého do pravého okraje okna */
+      --refs-gutter: 0px;
+      margin: 0 calc(50% - 50vw);
+      padding: 0 var(--refs-gutter);
+      scroll-padding: 0 var(--refs-gutter);
       scrollbar-width: none;
       overscroll-behavior-x: contain;
     }
@@ -567,7 +825,44 @@
 
     .ref-place { font-size: 0.875rem; color: rgba(255,255,255,0.6); }
 
-    .ref-card--tall .ref-title { font-size: 1.5rem; }
+    .ref-title { font-size: 1.35rem; }
+
+    .ref-desc { font-size: 0.9rem; line-height: 1.5; color: rgba(255,255,255,0.75); margin-top: 0.75rem; }
+
+    .ref-card--cta {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 2rem;
+      background: var(--primary);
+      color: #fff;
+    }
+    .ref-card--cta::after { display: none; }
+    .ref-card--cta h3 { font-size: 1.75rem; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+    .ref-card--cta p { font-size: 1rem; line-height: 1.5; opacity: 0.9; }
+    .ref-card--cta a {
+      display: inline-block;
+      padding: 0.85rem 1.5rem;
+      background: #fff;
+      color: var(--on-surface);
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: var(--radius);
+    }
+
+    .refs-hint {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+    }
 
     @media (hover: hover) {
       .ref-card:hover img { transform: scale(1.06); }
@@ -717,7 +1012,7 @@
       padding: 3rem;
       box-shadow: 0 20px 80px rgba(28,27,27,0.05);
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 2.5rem;
     }
 
@@ -731,6 +1026,32 @@
       .calc-head .calc-result { order: 2; }
       .calc-card .contact-heading { margin-bottom: 0; }
     }
+
+    .calc-bar {
+      position: fixed;
+      left: 1rem;
+      right: 1rem;
+      bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--on-surface);
+      color: #fff;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-decoration: none;
+      transform: translateY(150%);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .calc-bar.is-on { transform: none; opacity: 1; pointer-events: auto; }
+    .calc-bar strong { margin-left: auto; color: var(--primary); font-size: 1rem; font-weight: 900; text-align: right; }
+    @media (min-width: 768px) { .calc-bar { display: none; } }
 
     .calc-result {
       background: var(--surface);
@@ -881,6 +1202,38 @@
       outline-offset: 2px;
     }
 
+
+    .calc-breakdown li.calc-sub { padding-left: 0.9rem; font-size: 0.8125rem; }
+    .calc-add {
+      display: block; width: 100%; margin: 0 0 1rem; padding: 0.7rem 1rem;
+      font: inherit; font-weight: 700; font-size: 0.875rem; cursor: pointer;
+      color: var(--primary); background: transparent;
+      border: 1.5px solid var(--primary); border-radius: var(--radius);
+    }
+    .calc-add:hover { background: var(--primary); color: #fff; }
+    .calc-add:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .calc-items { margin-bottom: 1rem; border-top: 1px solid rgba(128,128,128,0.25); padding-top: 0.75rem; }
+    .calc-item-list { list-style: none; margin: 0.5rem 0 0.75rem; max-height: 25vh; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem; }
+    .calc-item { display: grid; grid-template-columns: 1fr auto auto; gap: 0.1rem 0.5rem; align-items: start; font-size: 0.875rem; }
+    .calc-item b { color: var(--on-surface); grid-column: 1; }
+    .calc-item em { font-style: normal; font-weight: 700; color: var(--on-surface); grid-column: 2; grid-row: 1; white-space: nowrap; }
+    .calc-item small { grid-column: 1 / 3; color: var(--on-surface-variant); font-size: 0.75rem; line-height: 1.4; }
+    .calc-item .calc-item-rm { grid-column: 3; grid-row: 1; background: none; border: 0; cursor: pointer; font-size: 1.1rem; line-height: 1; color: var(--on-surface-variant); padding: 0 0.25rem; }
+    .calc-item .calc-item-rm:hover { color: var(--primary); }
+
+    @media (max-width: 767px) {
+      .calc-result { padding: 1.25rem; scroll-margin-top: 6rem; }
+      .calc-item { grid-template-columns: 1fr auto; }
+      .calc-item b { grid-column: 1; grid-row: 1; }
+      .calc-item .calc-item-rm { grid-column: 2; grid-row: 1; }
+      .calc-item em { grid-column: 1 / -1; grid-row: 2; }
+      .calc-item small { grid-column: 1 / -1; }
+      .calc-item-list { max-height: none; overflow: visible; }
+      #calc-modes:not(.calc-hidden) { display: grid; grid-template-columns: 1fr 1fr; }
+      #calc-modes .calc-chip { padding-inline: 0.5rem; text-align: center; }
+      .calc-option { flex-wrap: wrap; }
+    }
+    .calc-optgroup { margin-top: 1.25rem; }
     .calc-hidden { display: none !important; }
 
     /* ─── Map ──────────────────────────────────────────────────── */
@@ -993,19 +1346,7 @@
         justify-content: space-between;
         align-items: flex-end;
       }
-      .refs-stats { flex-wrap: nowrap; gap: 3rem; }
-      .refs-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(2, 280px);
-        overflow: visible;
-        margin: 0;
-        padding: 0;
-        gap: 1rem;
-      }
-      .ref-card { flex: none; aspect-ratio: auto; }
-      .ref-card--tall { grid-row: span 2; }
-      .ref-card--wide { grid-column: span 2; }
+      .ref-card { flex: 0 0 min(34vw, 640px); aspect-ratio: 4 / 5; max-height: 600px; }
 
       /* Contact card */
       .contact-card {
@@ -1018,7 +1359,18 @@
 
       /* Calculator */
       .calc-card {
-        grid-template-columns: 1fr 2fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+      }
+
+      .calc-head {
+        position: sticky;
+        top: 8rem;
+        align-self: start;
+      }
+
+      .calc-head .calc-result {
+        max-height: calc(100vh - 9rem);
+        overflow-y: auto;
       }
 
       .calc-options {
@@ -1042,6 +1394,10 @@
       }
     }
 
+    @media (min-width: 768px) and (max-height: 700px) {
+      .calc-head { position: static; }
+    }
+
     @media (min-width: 1024px) {
       /* Photo inset stays clipped on small screens */
       .photo-inset {
@@ -1059,6 +1415,14 @@
 
 <!-- ─── Header ─────────────────────────────────────────────── -->
 <header class="site-header">
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="topbar-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.56 21 3 13.44 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>+420 XXX XXX XXX</span>
+    <a href="mailto:info@mbkbau.cz" class="topbar-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>info@mbkbau.cz</a>
+    <span class="topbar-item topbar-extra"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Nám. Kpt. Otmara Chlupa 822/1, Znojmo</span>
+    <span class="topbar-item topbar-extra topbar-hours"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/></svg>Po – Pá: 07:00 – 16:00</span>
+  </div>
+</div>
   <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
   <div class="nav-inner">
     <a href="#" class="logo-link">
@@ -1067,8 +1431,8 @@
 
     <nav aria-label="Hlavní navigace">
       <ul class="nav-links">
-        <li><a href="#pristup">Náš přístup</a></li>
         <li><a href="#co-delame">Služby</a></li>
+        <li><a href="#pristup">Náš přístup</a></li>
         <li><a href="#reference">Reference</a></li>
         <li><a href="#kalkulacka">Kalkulačka</a></li>
       </ul>
@@ -1085,8 +1449,8 @@
 
   <!-- Mobile dropdown -->
   <nav class="mobile-menu" aria-label="Mobilní navigace">
-    <a href="#pristup" onclick="document.getElementById('nav-toggle').checked=false">Náš přístup</a>
     <a href="#co-delame" onclick="document.getElementById('nav-toggle').checked=false">Služby</a>
+    <a href="#pristup" onclick="document.getElementById('nav-toggle').checked=false">Náš přístup</a>
     <a href="#reference" onclick="document.getElementById('nav-toggle').checked=false">Reference</a>
     <a href="#kalkulacka" onclick="document.getElementById('nav-toggle').checked=false">Kalkulačka</a>
     <a href="#kontakt" onclick="document.getElementById('nav-toggle').checked=false">Kontaktujte nás</a>
@@ -1137,37 +1501,155 @@
 </script>
 
 <!-- ─── Hero ───────────────────────────────────────────────── -->
-<section class="hero">
+<section class="hero" aria-roledescription="carousel" aria-label="Naše obory">
   <div class="hero-bg">
-    <img
-      src="images/hero.jpg"
-      alt="Stavební projekt v pohybu"
-      loading="eager"
-    />
+    <img class="hero-bg-img is-active" src="images/hero.jpg" alt="Stavební projekt v pohybu" loading="eager" />
+    <img class="hero-bg-img" src="images/hero-klimatizace.jpg" alt="Venkovní jednotka klimatizace" loading="lazy" />
+    <img class="hero-bg-img" src="images/hero-elektro.jpg" alt="Elektrikář při práci na rozvaděči" loading="lazy" />
+    <img class="hero-bg-img" src="images/hero-voda-topeni.jpg" alt="Instalatér při montáži vodoinstalace" loading="lazy" />
   </div>
 
-  <div class="hero-content">
-    <span class="hero-eyebrow">Prémiové stavební služby · Znojmo</span>
-    <h1>STAVÍME<br/><span class="accent">BUDOUCNOST</span></h1>
-    <p class="hero-subtitle">
-      Precizní řemeslo a spolehlivost pro každý projekt.<br/>
-      Od základů po poslední detail.
-    </p>
-    <div class="hero-ctas">
-      <a href="#kontakt" class="btn-primary hero-cta">Kontaktujte nás</a>
-      <a href="#pristup" class="btn-glass">Náš přístup</a>
+  <div class="hero-content" aria-live="off">
+    <div class="hero-slide is-active" role="group" aria-roledescription="slide" aria-label="1 z 4">
+      <span class="hero-eyebrow">MBK BAU · Stavební práce · Znojmo</span>
+      <h1>STAVÍME<br/><span class="accent">BUDOUCNOST</span></h1>
+      <p class="hero-subtitle">Precizní řemeslo a spolehlivost pro každý projekt.<br/>
+      Od základů po poslední detail.</p>
+      <div class="hero-ctas">
+        <a href="#kontakt" class="btn-primary hero-cta">Kontaktujte nás</a>
+      </div>
     </div>
+    <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="2 z 4">
+      <span class="hero-eyebrow">Klimatizace</span>
+      <h1>PŘÍJEMNÉ<br/><span class="accent">KLIMA</span></h1>
+      <p class="hero-subtitle">Montáž a servis klimatizací a tepelných čerpadel pro domácnosti i firmy.</p>
+      <div class="hero-ctas">
+        <!-- TODO: doplnit URL -->
+        <a class="btn-primary hero-cta" href="#" data-todo="odkaz na web firmy" target="_blank" rel="noopener">Přejít na web →</a>
+      </div>
+    </div>
+    <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="3 z 4">
+      <span class="hero-eyebrow">Elektromontáže</span>
+      <h1>BEZPEČNÁ<br/><span class="accent">ENERGIE</span></h1>
+      <p class="hero-subtitle">Elektroinstalace, rozvaděče a revize – od rodinných domů po komerční objekty.</p>
+      <div class="hero-ctas">
+        <!-- TODO: doplnit URL -->
+        <a class="btn-primary hero-cta" href="#" data-todo="odkaz na web firmy" target="_blank" rel="noopener">Přejít na web →</a>
+      </div>
+    </div>
+    <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="4 z 4">
+      <span class="hero-eyebrow">Voda a topení</span>
+      <h1>TEPLO<br/><span class="accent">DOMOVA</span></h1>
+      <p class="hero-subtitle">Rozvody vody, kotle a podlahové topení navržené na desítky let.</p>
+      <div class="hero-ctas">
+        <!-- TODO: doplnit URL -->
+        <a class="btn-primary hero-cta" href="#" data-todo="odkaz na web firmy" target="_blank" rel="noopener">Přejít na web →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-nav">
+    <div class="hero-arrows">
+      <button type="button" class="btn-glass hero-arrow" data-dir="-1" aria-label="Předchozí obor">←</button>
+      <button type="button" class="btn-glass hero-arrow" data-dir="1" aria-label="Další obor">→</button>
+    </div>
+    <ul class="hero-dots">
+      <li style="display:contents"><button type="button" class="hero-dot is-active" data-i="0" aria-label="Stavební práce" aria-current="true"><span class="hero-dot-num">01</span>Stavební práce</button></li>
+      <li style="display:contents"><button type="button" class="hero-dot" data-i="1" aria-label="Klimatizace"><span class="hero-dot-num">02</span>Klimatizace</button></li>
+      <li style="display:contents"><button type="button" class="hero-dot" data-i="2" aria-label="Elektromontáže"><span class="hero-dot-num">03</span>Elektromontáže</button></li>
+      <li style="display:contents"><button type="button" class="hero-dot" data-i="3" aria-label="Voda a topení"><span class="hero-dot-num">04</span>Voda a topení</button></li>
+    </ul>
   </div>
 </section>
 
 <!-- ─── Services Slider ────────────────────────────────────── -->
 <section class="services-section" id="sluzby" aria-label="Naše služby">
   <div class="service-container" role="region" aria-live="polite">
-    <span>Stavební a zednické práce</span>
+    <span>Rekonstrukce</span>
+    <span>Stavební práce</span>
+    <span>Elektromontáže</span>
+    <span>Voda a topení</span>
+    <span>Klimatizace</span>
+    <span>Sádrokartony</span>
+    <span>Obkladačství</span>
+    <span>Fasády a zateplení</span>
     <span>Malířské a natěračské práce</span>
     <span>Bourací práce</span>
-    <span>Fasády a zateplení</span>
-    <span>Sádrokartony</span>
+  </div>
+</section>
+
+<!-- ─── Naše služby ───────────────────────────────────────── -->
+<section class="services-detail-section" id="co-delame">
+  <div class="services-detail-inner">
+
+    <div class="services-visual">
+    <div class="photo-wrapper photo-wrapper--reversed">
+      <img
+        class="photo-main"
+        id="svc-main"
+        src="images/sluzby/rekonstrukce-main.jpg"
+        alt="Rekonstrukce interiéru"
+      />
+      <img
+        class="photo-inset"
+        id="svc-inset"
+        src="images/sluzby/rekonstrukce-inset.jpg"
+        alt="Rekonstrukce interiéru – detail"
+      />
+    </div>
+    <div class="service-panel" aria-live="polite">
+      <h3 id="sp-title">Rekonstrukce</h3>
+      <p id="sp-text">Kompletní rekonstrukce bytů, domů i komerčních prostor – od projektu přes bourání a instalace až po finální povrchy. Celou zakázku koordinujeme sami, vy máte jednoho partnera.</p>
+    </div>
+    </div>
+
+    <div class="approach-text">
+      <span class="section-eyebrow">Co děláme</span>
+      <h2>Kompletní stavební služby pod jednou střechou.</h2>
+      <ul class="services-list">
+        <li class="is-active" data-main="images/sluzby/rekonstrukce-main.jpg" data-inset="images/sluzby/rekonstrukce-inset.jpg" data-alt="Rekonstrukce interiéru">
+          <button type="button" class="service-btn" aria-pressed="true"><span class="service-num">01</span> <span class="service-name">Rekonstrukce</span></button>
+          <div class="service-desc"><div><p>Kompletní rekonstrukce bytů, domů i komerčních prostor – od projektu přes bourání a instalace až po finální povrchy. Celou zakázku koordinujeme sami, vy máte jednoho partnera.</p><img src="images/sluzby/rekonstrukce-main.jpg" alt="Rekonstrukce interiéru" loading="lazy" /></div></div>
+        </li>
+        <li data-main="images/sluzby/stavebni-prace-main.jpg" data-inset="images/sluzby/stavebni-prace-inset.jpg" data-alt="Zedník při stavebních pracích">
+          <button type="button" class="service-btn" aria-pressed="false"><span class="service-num">02</span> <span class="service-name">Stavební práce</span></button>
+          <div class="service-desc"><div><p>Zdění, betonáže, příčky i hrubé stavby od základů po střechu. Pracujeme podle projektu, v dohodnutých termínech a s pravidelnou kontrolou kvality.</p><img src="images/sluzby/stavebni-prace-main.jpg" alt="Zedník při stavebních pracích" loading="lazy" /></div></div>
+        </li>
+        <li data-main="images/sluzby/elektro-main.jpg" data-inset="images/sluzby/elektro-inset.jpg" data-alt="Elektrikář při montáži rozvodů">
+          <button type="button" class="service-btn" aria-pressed="false"><span class="service-num">03</span> <span class="service-name">Elektromontáže</span></button>
+          <div class="service-desc"><div><p>Nové rozvody, výměna rozvaděčů, osvětlení i zásuvky, včetně výchozí revize. Vše provádí kvalifikovaní elektrikáři podle platných norem.</p><img src="images/sluzby/elektro-main.jpg" alt="Elektrikář při montáži rozvodů" loading="lazy" /></div></div>
+        </li>
+        <li data-main="images/sluzby/voda-topeni-main.jpg" data-inset="images/sluzby/voda-topeni-inset.jpg" data-alt="Instalatér při montáži rozvodů">
+          <button type="button" class="service-btn" aria-pressed="false"><span class="service-num">04</span> <span class="service-name">Voda a topení</span></button>
+          <div class="service-desc"><div><p>Rozvody vody a kanalizace, instalace kotlů, radiátorů i podlahového topení. Navrhneme řešení, které je úsporné a spolehlivé na dlouhé roky.</p><img src="images/sluzby/voda-topeni-main.jpg" alt="Instalatér při montáži rozvodů" loading="lazy" /></div></div>
+        </li>
+        <li data-main="images/sluzby/klimatizace-main.jpg" data-inset="images/sluzby/klimatizace-inset.jpg" data-alt="Montáž klimatizační jednotky">
+          <button type="button" class="service-btn" aria-pressed="false"><span class="service-num">05</span> <span class="service-name">Klimatizace</span></button>
+          <div class="service-desc"><div><p>Montáž a servis split i multisplit klimatizací pro domácnosti a firmy. Poradíme s výběrem jednotky a postaráme se o instalaci na klíč.</p><img src="images/sluzby/klimatizace-main.jpg" alt="Montáž klimatizační jednotky" loading="lazy" /></div></div>
+        </li>
+        <li data-main="images/sluzby/sadrokartony-main.jpg" data-inset="images/sluzby/sadrokartony-inset.jpg" data-alt="Sádrokartonové desky a nářadí">
+          <button type="button" class="service-btn" aria-pressed="false"><span class="service-num">06</span> <span class="service-name">Sádrokartony</span></button>
+          <div class="service-desc"><div><p>Podhledy, příčky a předsazené stěny včetně tmelení a přípravy na malování. Rychlá a čistá práce s hladkým výsledkem.</p><img src="images/sluzby/sadrokartony-main.jpg" alt="Sádrokartonové desky a nářadí" loading="lazy" /></div></div>
+        </li>
+        <li data-main="images/sluzby/obklady-main.jpg" data-inset="images/sluzby/obklady-inset.jpg" data-alt="Obkladač při pokládce dlažby">
+          <button type="button" class="service-btn" aria-pressed="false"><span class="service-num">07</span> <span class="service-name">Obkladačství</span></button>
+          <div class="service-desc"><div><p>Pokládka obkladů a dlažeb v koupelnách, kuchyních i na terasách. Důraz klademe na přesné spáry, hydroizolaci a čistý detail.</p><img src="images/sluzby/obklady-main.jpg" alt="Obkladač při pokládce dlažby" loading="lazy" /></div></div>
+        </li>
+        <li data-main="images/sluzby/fasady-main.jpg" data-inset="images/sluzby/fasady-inset.jpg" data-alt="Zateplování fasády rodinného domu">
+          <button type="button" class="service-btn" aria-pressed="false"><span class="service-num">08</span> <span class="service-name">Fasády a zateplení</span></button>
+          <div class="service-desc"><div><p>Kontaktní zateplovací systémy a nové fasádní omítky, které snižují náklady na energie. Zajistíme lešení, zateplení i finální povrch.</p><img src="images/sluzby/fasady-main.jpg" alt="Zateplování fasády rodinného domu" loading="lazy" /></div></div>
+        </li>
+        <li data-main="images/sluzby/malovani-main.jpg" data-inset="images/sluzby/malovani-inset.jpg" data-alt="Malíř při natírání stěny">
+          <button type="button" class="service-btn" aria-pressed="false"><span class="service-num">09</span> <span class="service-name">Malířské a natěračské práce</span></button>
+          <div class="service-desc"><div><p>Malování interiérů, nátěry fasád, oken i konstrukcí. Pracujeme čistě, s kvalitními barvami a s krytím okolního zařízení.</p><img src="images/sluzby/malovani-main.jpg" alt="Malíř při natírání stěny" loading="lazy" /></div></div>
+        </li>
+        <li data-main="images/sluzby/bouraci-main.jpg" data-inset="images/sluzby/bouraci-inset.jpg" data-alt="Bourací práce na stavbě">
+          <button type="button" class="service-btn" aria-pressed="false"><span class="service-num">10</span> <span class="service-name">Bourací práce</span></button>
+          <div class="service-desc"><div><p>Bourání příček, vybourání otvorů i demolice celých objektů. Včetně odvozu a likvidace suti v souladu s předpisy.</p><img src="images/sluzby/bouraci-main.jpg" alt="Bourací práce na stavbě" loading="lazy" /></div></div>
+        </li>
+      </ul>
+    </div>
+
   </div>
 </section>
 
@@ -1203,38 +1685,6 @@
   </div>
 </section>
 
-<!-- ─── Naše služby ───────────────────────────────────────── -->
-<section class="services-detail-section" id="co-delame">
-  <div class="services-detail-inner">
-
-    <div class="photo-wrapper photo-wrapper--reversed">
-      <img
-        class="photo-main"
-        src="images/services-main.jpg"
-        alt="Řemeslná práce na stavbě"
-      />
-      <img
-        class="photo-inset"
-        src="images/services-inset.jpg"
-        alt="Fasáda a zateplení"
-      />
-    </div>
-
-    <div class="approach-text">
-      <span class="section-eyebrow">Co děláme</span>
-      <h2>Kompletní stavební služby pod jednou střechou.</h2>
-      <ul class="services-list">
-        <li><span class="service-num">01</span> Stavební a zednické práce</li>
-        <li><span class="service-num">02</span> Malířské a natěračské práce</li>
-        <li><span class="service-num">03</span> Bourací práce</li>
-        <li><span class="service-num">04</span> Fasády a zateplení</li>
-        <li><span class="service-num">05</span> Sádrokartony</li>
-      </ul>
-    </div>
-
-  </div>
-</section>
-
 <!-- ─── Reference ──────────────────────────────────────────── -->
 <!-- MOCK: nahradit reálnými zakázkami -->
 <section class="refs-section" id="reference">
@@ -1242,22 +1692,18 @@
     <div class="refs-head">
       <div class="approach-text">
         <span class="section-eyebrow">Reference</span>
-        <h2>Stavby, za kterými si stojíme.</h2>
-      </div>
-      <div class="refs-stats">
-        <div class="refs-stat"><p class="refs-stat-num"><span data-count="120">120</span>+</p><p class="contact-label">realizací</p></div>
-        <div class="refs-stat"><p class="refs-stat-num"><span data-count="15">15</span></p><p class="contact-label">let praxe</p></div>
-        <div class="refs-stat"><p class="refs-stat-num"><span data-count="5">5</span></p><p class="contact-label">oborů</p></div>
+        <h2>Projekty, za kterými si stojíme.</h2>
       </div>
     </div>
 
-    <div class="refs-grid">
-      <article class="ref-card ref-card--tall">
+    <div class="refs-grid" id="refs-grid">
+      <article class="ref-card">
         <img src="images/about-main.jpg" alt="Rekonstrukce rodinného domu" loading="lazy" />
         <div class="ref-meta">
-          <span class="ref-cat">Zednické práce</span>
+          <span class="ref-cat">Rekonstrukce</span>
           <h3 class="ref-title">Rekonstrukce rodinného domu</h3>
           <p class="ref-place">Znojmo · 2025</p>
+          <p class="ref-desc">Kompletní rekonstrukce od hrubé stavby po finální povrchy.</p>
         </div>
       </article>
       <article class="ref-card">
@@ -1266,6 +1712,7 @@
           <span class="ref-cat">Fasády a zateplení</span>
           <h3 class="ref-title">Zateplení bytového domu</h3>
           <p class="ref-place">Moravský Krumlov · 2024</p>
+          <p class="ref-desc">Zateplení bytového domu s novou omítkou a sjednocenou fasádou.</p>
         </div>
       </article>
       <article class="ref-card">
@@ -1274,16 +1721,26 @@
           <span class="ref-cat">Sádrokartony</span>
           <h3 class="ref-title">Podkroví s novými příčkami</h3>
           <p class="ref-place">Hrušovany nad Jevišovkou · 2025</p>
+          <p class="ref-desc">Podkroví s novými příčkami, podhledy a připraveným rozvodem.</p>
         </div>
       </article>
-      <article class="ref-card ref-card--wide">
-        <img src="images/hero.jpg" alt="Malování kancelářských prostor" loading="lazy" />
+      <article class="ref-card">
+        <img src="images/about-malovani.jpg" alt="Malování kancelářských prostor" loading="lazy" />
         <div class="ref-meta">
           <span class="ref-cat">Malířské práce</span>
           <h3 class="ref-title">Kancelářské prostory</h3>
           <p class="ref-place">Znojmo · 2024</p>
+          <p class="ref-desc">Malba kancelářských prostor v provozu s minimálním omezením.</p>
         </div>
       </article>
+      <article class="ref-card ref-card--cta">
+        <h3>Budete další?</h3>
+        <p>Nezávazně se u vás zastavíme, projdeme zakázku a připravíme cenovou nabídku.</p>
+        <a href="#kontakt">Mám zájem →</a>
+      </article>
+    </div>
+    <div class="refs-hint">
+      <span>Posuňte pro další reference</span>
     </div>
 
     <div class="ref-quote" id="ref-quotes">
@@ -1336,10 +1793,17 @@
           <p>Vyberte práci, zadejte rozměry a hned uvidíte orientační cenu.</p>
         </div>
 
-        <div class="calc-result" aria-live="polite">
+        <div class="calc-result" id="calc-result" aria-live="polite">
           <p class="contact-label">Orientační cena</p>
           <p class="calc-price" id="calc-price">—</p>
           <ul class="calc-breakdown" id="calc-breakdown"></ul>
+          <p class="calc-note calc-hidden" id="calc-matnote">Materiál zahrnuje desky, kovové profily, závěsy, šrouby, kotvy, pásku a tmel.</p>
+          <button type="button" class="calc-add" id="calc-add">+ Přidat do odhadu</button>
+          <div class="calc-items calc-hidden" id="calc-items">
+            <p class="contact-label">Váš odhad</p>
+            <ul class="calc-item-list" id="calc-item-list"></ul>
+            <ul class="calc-breakdown" id="calc-total"></ul>
+          </div>
           <label class="calc-option" style="margin-bottom:1rem">
             <input type="checkbox" id="calc-vat" /> Zobrazit s DPH (12&nbsp;%)
           </label>
@@ -1360,6 +1824,7 @@
         <div>
           <p class="contact-label">2 · Typ práce</p>
           <div class="calc-options" id="calc-types"></div>
+          <div id="calc-opts"></div>
         </div>
 
         <div>
@@ -1394,6 +1859,7 @@
       </div>
 
     </div>
+    <a href="#calc-result" class="calc-bar" id="calc-bar"><span>Orientační cena</span><strong id="calc-bar-price">—</strong> ↓</a>
   </div>
 </section>
 
@@ -1472,30 +1938,229 @@
 </section>
 <script>
   (function () {
-    // Mock ceny v Kč/m² bez DPH – upravte zde.
+    // Ceny v Kč bez DPH – upravte podle firemního ceníku.
+    // Materiál: Hornbach CZ, výtisk 16. 10. 2026, ceny s DPH ÷ 1,21.
+    // Práce: daibau.cz (pokládka obkladů akt. 8/2025, malování 8/2025, demolice 2026),
+    //        kolikmaterialu.cz (zateplení, vnitřní omítka, bourací práce, řemesla; 5/2026),
+    //        mobetony.cz (potěry 2026), megastroj.cz (ceník řemesel a kontejner 2026),
+    //        SDK: nejremeslnici.cz (1/2026), sdk-urban.cz ceník 2026.
+    // Spotřeby na m² jsou orientační podle technických listů výrobců (Knauf, Weber, Baumit, Primalex, Mapei).
+    // Položky označené „odhad – ověřit“ jsem v ceníku nenašel.
     // area: walls | ceiling | floor | both (stěny+strop) | manual (zadává se m²)
+    // mat: { g: skupina, n: název, q: spotřeba na m², u: jednotka, p: cena bez DPH,
+    //        l: násobit vrstvami (nátěry, cm potěru) a stranami, s: násobit stranami }
+    // volba: { labour, mat, layers, board, waste (m³ suti na m²), d }; option: when [id, index] = zobrazit jen u dané volby, def = výchozí index
+    // doplněk: [název, Kč/m² (u 'w' Kč/m³ suti), mat, 'w']
+    var M = function (g, n, q, u, p, f) { var o = { g: g, n: n, q: q, u: u, p: p }; if (f) o[f] = true; return o; };
+    var MARKUP = 1.15; // doprava, ztratné, manipulace u SDK
+    var BOARD_WASTE = 1.05;
+
+    // společný spojovací a tmelicí materiál SDK
+    var SDK_COMMON = [
+      M('spoj', 'Šroub TN 25', 17, 'ks', 0.31, 'l'),          // Hornbach
+      M('spoj', 'Hmoždinka / kotva', 2, 'ks', 3),             // odhad – ověřit
+      M('spoj', 'Spárovací páska', 1.5, 'm', 2, 's'),         // odhad – ověřit
+      M('spoj', 'Tmel Uniflott (Q2)', 0.35, 'kg', 36, 's')    // Hornbach
+    ];
+    var CD_UD = [M('prof', 'CD 60/27', 2.0, 'm', 23), M('prof', 'UD 28/27', 0.8, 'm', 15)];
+    var ST = function (n, d, extra) { var c = { n: n, d: d === undefined ? n : d }; for (var k in extra) c[k] = extra[k]; return c; };
+
+    function sdkOpts(construction) {
+      return [
+        { id: 'con', label: 'Konstrukce', choices: construction },
+        { id: 'board', label: 'Deska', choices: [
+          ST('Standardní GKB 12,5 mm', 'GKB', { board: 81 }),
+          ST('Impregnovaná GKBI (koupelny)', 'GKBI', { board: 127, labour: [20, 30] }),
+          ST('Protipožární GKF', 'GKF', { board: 96 })
+        ]},
+        { id: 'layers', label: 'Opláštění', choices: [
+          ST('Jednoduché (1 vrstva)', '1 vrstva', { layers: 1 }),
+          ST('Dvojité (2 vrstvy)', '2 vrstvy', { layers: 2, labour: [150, 250] })
+        ]},
+        { id: 'izol', label: 'Izolace', choices: [
+          ST('Bez izolace', ''),
+          ST('Minerální vata 50 mm', 'vata 50 mm', { labour: [40, 70], mat: [M('izol', 'Minerální vata 50 mm', 1, 'm²', 70)] }),   // odhad – ověřit
+          ST('Minerální vata 100 mm', 'vata 100 mm', { labour: [40, 70], mat: [M('izol', 'Minerální vata 100 mm', 1, 'm²', 120)] }) // odhad – ověřit
+        ]},
+        { id: 'tmel', label: 'Tmelení', choices: [
+          ST('Q2 (v ceně)', 'Q2'),
+          ST('Q3 (celoplošná stěrka)', 'Q3', { labour: [40, 90], mat: [M('spoj', 'Stěrka Q3', 0.5, 'kg', 36, 's')] }),   // práce: daibau „stěrkování“; spotřeba odhad – ověřit
+          ST('Q4', 'Q4', { labour: [90, 160], mat: [M('spoj', 'Stěrka Q4', 1.0, 'kg', 36, 's')] })                          // odhad – ověřit
+        ]}
+      ];
+    }
+
+
+    // ── Obkladačství ──
+    var MGRUNT = function (q) { return M('hydro', 'Penetrace Mapei M-Grunt', q, 'l', 62); }; // Hornbach
+    var LEP_STD = [M('lep', 'Lepidlo C2T AKKIT 420', 4, 'kg', 8.2)];                          // Hornbach
+    function obkOpts() {
+      return [
+        { id: 'fmt', label: 'Formát', choices: [
+          ST('Do 30×60 cm', 'do 30×60', { labour: [400, 900], mat: LEP_STD }),                 // práce: daibau
+          ST('60×60 až 80×80 cm', '60×60 až 80×80', { labour: [700, 1150], mat: LEP_STD }),
+          ST('Velkoformát (nad 100×100 cm)', 'velkoformát', { labour: [1300, 2000], mat: [M('lep', 'Lepidlo Knauf Flexkleber C2TE S1', 6, 'kg', 11.4)] })
+        ]},
+        { id: 'dlaz', label: 'Dlaždice', choices: [
+          ST('Dodá zákazník', ''),
+          ST('Běžné (cca 400 Kč/m²)', 'dlaždice běžné', { mat: [M('dlaz', 'Dlaždice – běžné', 1.1, 'm²', 400)] }),     // odhad – ověřit
+          ST('Střední třída (cca 800 Kč/m²)', 'dlaždice střední třída', { mat: [M('dlaz', 'Dlaždice – střední třída', 1.1, 'm²', 800)] }) // odhad – ověřit
+        ]},
+        { id: 'lay', label: 'Pokládka', choices: [
+          ST('Rovně', ''),
+          ST('Diagonálně', 'diagonální pokládka', { labour: [150, 250] })                      // odhad – ověřit
+        ]}
+      ];
+    }
+    function obkExtras(hydroLabour, oldName) {
+      return [
+        ['Penetrace', [45, 145], [MGRUNT(0.15)]],                                              // daibau
+        ['Hydroizolační stěrka', hydroLabour, [M('hydro', 'Hydroizolační stěrka Soudal 1K', 2, 'kg', 60), M('hydro', 'Těsnicí páska', 0.5, 'm', 25)]], // materiál odhad – ověřit
+        [oldName, [162, 666]]                                                                  // daibau
+      ];
+    }
+
+    // ── Malování ──
+    function malOpts() {
+      return [
+        { id: 'col', label: 'Barva', choices: [
+          ST('Bílá Primalex Plus', 'bílá Primalex Plus', { mat: [M('barva', 'Primalex Plus', 0.17, 'kg', 32.5, 'l')] }),
+          ST('Bílá Primalex Polar (vyšší krytí)', 'bílá Primalex Polar', { mat: [M('barva', 'Primalex Polar', 0.17, 'kg', 45.2, 'l')] }),
+          ST('Tónovaná / barevná', 'tónovaná barva', { labour: [20, 35], mat: [M('barva', 'Tónovaná barva', 0.12, 'l', 211, 'l')] }) // práce: daibau syté odstíny 58–101
+        ]},
+        { id: 'coats', label: 'Počet nátěrů', choices: [
+          ST('2 nátěry', '2 nátěry', { layers: 2 }),
+          ST('3 nátěry (sytý odstín, přetírání tmavé)', '3 nátěry', { layers: 3, labour: [15, 25] })
+        ]}
+      ];
+    }
+    var MAL_EXTRAS = [
+      ['Penetrace', [20, 30], [MGRUNT(0.1)]],
+      ['Zakrývání podlah a nábytku', [18, 45]],                                                // daibau
+      ['Škrábání staré malby', [9, 67]],                                                       // daibau
+      ['Stěrkování stěn 2×', [135, 324], [M('lep', 'Stěrka na stěny', 1.5, 'kg', 12)]]         // daibau; materiál odhad – ověřit
+    ];
+
+    // ── Fasády ──
+    var FAS_PEN = M('hydro', 'Penetrace pod omítku', 0.2, 'kg', 70);                           // odhad – ověřit
+    var EPS_ANCHOR = M('kotvy', 'Talířová hmoždinka Precit 140', 6, 'ks', 9.9);
+    var VATA_ANCHOR = M('kotvy', 'Talířová hmoždinka Precit 140', 8, 'ks', 9.9);
+    var FAS_OMIT = { id: 'omit', label: 'Omítka', choices: [
+      ST('Silikonová 1,5 mm (Baumit Silikon Top)', 'silikonová omítka', { mat: [M('omit', 'Silikonová omítka Baumit Silikon Top 1,5 mm', 2.5, 'kg', 54), FAS_PEN] }),
+      ST('Akrylátová', 'akrylátová omítka', { mat: [M('omit', 'Akrylátová omítka', 2.5, 'kg', 40), FAS_PEN] }) // cena odhad – ověřit
+    ]};
+    var FAS_SCAFF = ['Lešení (pronájem, montáž, demontáž)', [120, 220]];                       // kolikmaterialu
+
+    // ── Zednické práce ──
+    var PLASTER_FINISH = M('omit', 'Štuk Weber CZ 310', 4, 'kg', 5.45);
+    var BOU_WASTE_EXTRA = ['Odvoz a likvidace suti', [450, 650], null, 'w'];                   // kontejner 3–5 m³ za 1 800–2 500 Kč (megastroj)
+
     var PRICING = {
+      matMarkup: MARKUP,
       services: [
-        { id: 'sdk', name: 'Sádrokartony', types: [
-          { name: 'Obklad stěn', area: 'walls', min: 450, max: 650, mat: 350, extras: [['Izolace', 150], ['Impregnované desky', 120], ['Tmelení Q3', 80]] },
-          { name: 'Podhled', area: 'ceiling', min: 600, max: 850, mat: 400, extras: [['Izolace', 150], ['Tmelení Q3', 80]] },
-          { name: 'Příčka', area: 'manual', min: 650, max: 900, mat: 450, extras: [['Izolace', 150], ['Impregnované desky', 120]] }
+        { id: 'sdk', name: 'Sádrokartony',
+          matNote: 'Materiál zahrnuje desky, kovové profily, závěsy, šrouby, kotvy, pásku a tmel.',
+          types: [
+          // Obklad stěn: CD 2,0 m + UD 0,8 m + 1,5 přímého závěsu na m²
+          { name: 'Obklad stěn', area: 'walls', labour: [300, 550], mat: SDK_COMMON,
+            opts: sdkOpts([
+              ST('CD profily na přímých závěsech', 'CD na přímých závěsech', { mat: CD_UD.concat([M('prof', 'Přímý závěs', 1.5, 'ks', 10)]) }),
+              ST('Volně stojící předstěna CW 50 (pro instalace)', 'předstěna CW 50', { labour: [50, 50], mat: [M('prof', 'CW 50', 2.0, 'm', 31), M('prof', 'UW 50', 0.8, 'm', 25)] })
+            ]),
+            extras: [] },
+          // Podhled: přímý CD 2,3 m + UD 0,6 m + 1,5 závěsu; zavěšený CD 3,2 m + UD 0,6 m + 1,2 noniusu
+          { name: 'Podhled', area: 'ceiling', labour: [300, 550], mat: SDK_COMMON,
+            opts: sdkOpts([
+              ST('Přímo pod stropem (CD na přímých závěsech)', 'přímo pod stropem', { mat: [M('prof', 'CD 60/27', 2.3, 'm', 23), M('prof', 'UD 28/27', 0.6, 'm', 15), M('prof', 'Přímý závěs', 1.5, 'ks', 10)] }),
+              ST('Zavěšený křížový rošt (nonius)', 'zavěšený rošt', { labour: [100, 100], mat: [M('prof', 'CD 60/27', 3.2, 'm', 23), M('prof', 'UD 28/27', 0.6, 'm', 15), M('prof', 'Noniusový závěs', 1.2, 'ks', 15)] }) // nonius: odhad – ověřit
+            ]),
+            extras: [['Parotěsná fólie', 50, [M('spoj', 'Parotěsná fólie', 1.1, 'm²', 20)]]] }, // fólie: odhad – ověřit
+          // Příčka: CW 2,0 m + UW 0,8 m dle šířky profilu, opláštění z obou stran
+          { name: 'Příčka', area: 'manual', sides: 2, labour: [350, 600], mat: SDK_COMMON,
+            opts: sdkOpts([
+              ST('Profil CW 50', 'CW 50', { mat: [M('prof', 'CW 50', 2.0, 'm', 31), M('prof', 'UW 50', 0.8, 'm', 25)] }),
+              ST('Profil CW 75', 'CW 75', { mat: [M('prof', 'CW 75', 2.0, 'm', 36), M('prof', 'UW 75', 0.8, 'm', 30)] }),
+              ST('Profil CW 100', 'CW 100', { mat: [M('prof', 'CW 100', 2.0, 'm', 46), M('prof', 'UW 100', 0.8, 'm', 36)] })
+            ]),
+            extras: [] }
         ]},
-        { id: 'mal', name: 'Malování', types: [
-          { name: 'Bílá malba 2× (stěny + strop)', area: 'both', min: 45, max: 65, mat: 15, extras: [['Penetrace', 12], ['Zakrývání', 10]] },
-          { name: 'Barevná malba (stěny)', area: 'walls', min: 60, max: 85, mat: 25, extras: [['Penetrace', 12]] }
+        { id: 'obk', name: 'Obkladačství',
+          matNote: 'Materiál zahrnuje lepidlo, spárovací hmotu, dlaždice (pokud je dodáváme) a materiál doplňků.',
+          types: [
+          { name: 'Obklad stěn', area: 'walls', labour: [0, 0], mat: [M('spar', 'Spárovací hmota Knauf Fugenbunt', 0.4, 'kg', 28.9)], opts: obkOpts(), extras: obkExtras([72, 351], 'Sekání starého obkladu') },
+          { name: 'Dlažba podlahy', area: 'floor', labour: [0, 0], mat: [M('spar', 'Spárovací hmota Knauf Fugenbunt', 0.4, 'kg', 28.9)], opts: obkOpts(), extras: obkExtras([99, 218], 'Sekání staré dlažby') },
+          { name: 'Koupelna (stěny + podlaha)', area: 'both', labour: [0, 0], mat: [M('spar', 'Spárovací hmota Knauf Fugenbunt', 0.4, 'kg', 28.9)], opts: obkOpts(), extras: obkExtras([72, 351], 'Sekání starého obkladu a dlažby') }
         ]},
-        { id: 'fas', name: 'Fasády a zateplení', types: [
-          { name: 'Zateplení EPS 100 mm', area: 'walls', min: 1100, max: 1400, mat: 650, extras: [['Lešení', 120], ['Silikonová omítka', 150]] },
-          { name: 'Zateplení minerální vatou', area: 'walls', min: 1400, max: 1800, mat: 900, extras: [['Lešení', 120]] }
+        { id: 'mal', name: 'Malování',
+          matNote: 'Materiál zahrnuje barvu podle počtu nátěrů a materiál doplňků (penetrace, stěrka).',
+          types: [
+          { name: 'Stěny + strop', area: 'both', labour: [35, 60], mat: [], opts: malOpts(), extras: MAL_EXTRAS },   // práce 2 nátěry: daibau 40–67 vč. materiálu
+          { name: 'Jen stěny', area: 'walls', labour: [35, 60], mat: [], opts: malOpts(), extras: MAL_EXTRAS },
+          { name: 'Jen strop', area: 'ceiling', labour: [35, 60], mat: [], opts: malOpts(), extras: MAL_EXTRAS }
         ]},
-        { id: 'bou', name: 'Bourací práce', types: [
-          { name: 'Příčky', area: 'manual', min: 250, max: 400, mat: 0, extras: [['Odvoz suti', 80]] },
-          { name: 'Dlažba / obklady', area: 'floor', min: 150, max: 250, mat: 0, extras: [['Odvoz suti', 60]] }
+        { id: 'fas', name: 'Fasády a zateplení',
+          matNote: 'Materiál zahrnuje izolant, lepidlo a stěrku, kotvy, perlinku, penetraci a omítku.',
+          types: [
+          { name: 'Zateplení ETICS', area: 'walls', labour: [550, 1200], // kolikmaterialu
+            mat: [M('lep', 'Lepidlo a stěrka Weber CZ 700', 8.5, 'kg', 6.9), M('kotvy', 'Perlinka Baumit', 1.15, 'm²', 21.7)],
+            opts: [
+              { id: 'izol', label: 'Izolant', choices: [
+                ST('EPS 70F 100 mm', 'EPS 100 mm', { mat: [M('izol', 'EPS 70F 100 mm', 1, 'm²', 190), EPS_ANCHOR] }),
+                ST('EPS 70F 140 mm', 'EPS 140 mm', { mat: [M('izol', 'EPS 70F 140 mm', 1, 'm²', 266), EPS_ANCHOR] }),
+                ST('EPS 70F 200 mm', 'EPS 200 mm', { mat: [M('izol', 'EPS 70F 200 mm', 1, 'm²', 380), EPS_ANCHOR] }),
+                ST('Minerální vata Isover Fassil 100 mm', 'Fassil 100 mm', { labour: [150, 250], mat: [M('izol', 'Isover Fassil 100 mm', 1, 'm²', 224), VATA_ANCHOR] }),
+                ST('Minerální vata Isover Fassil 140 mm', 'Fassil 140 mm', { labour: [150, 250], mat: [M('izol', 'Isover Fassil 140 mm', 1, 'm²', 314), VATA_ANCHOR] })
+              ]},
+              FAS_OMIT
+            ],
+            extras: [FAS_SCAFF, ['Složitá fasáda (arkýře, šambrány)', [200, 400]]] },
+          { name: 'Fasádní omítka bez zateplení', area: 'walls', matNote: 'Materiál zahrnuje penetraci a fasádní omítku.', labour: [160, 320], mat: [], opts: [FAS_OMIT], extras: [FAS_SCAFF] }
         ]},
-        { id: 'zed', name: 'Zednické práce', types: [
-          { name: 'Omítky', area: 'walls', min: 350, max: 500, mat: 120, extras: [] },
-          { name: 'Potěr podlahy', area: 'floor', min: 400, max: 550, mat: 180, extras: [] }
+        { id: 'bou', name: 'Bourací práce', noMat: true,
+          matNote: 'Cena zahrnuje vybourání, naložení a odvoz suti dle volby.',
+          types: [
+          { name: 'Příčky', area: 'manual', labour: [0, 0], mat: [],
+            opts: [{ id: 'wall', label: 'Materiál příčky', choices: [
+              ST('Sádrokarton', 'SDK příčka', { labour: [150, 250], waste: 0.05 }),             // odhad – ověřit
+              ST('Příčkovka do 10 cm', 'příčkovka do 10 cm', { labour: [300, 500], waste: 0.15 }),
+              ST('Plná cihla', 'plná cihla', { labour: [600, 900], waste: 0.25 })
+            ]}],
+            extras: [BOU_WASTE_EXTRA] },
+          { name: 'Dlažba', area: 'floor', labour: [150, 400], waste: 0.03, mat: [], extras: [BOU_WASTE_EXTRA] },
+          { name: 'Obklad stěn', area: 'walls', labour: [150, 400], waste: 0.03, mat: [], extras: [BOU_WASTE_EXTRA] },
+          { name: 'Omítky', area: 'walls', labour: [0, 0], mat: [],
+            opts: [{ id: 'thick', label: 'Tloušťka omítky', choices: [
+              ST('Do 1 cm', '1 cm', { labour: [60, 150], waste: 0.015 }),
+              ST('2 cm', '2 cm', { labour: [120, 300], waste: 0.03 })
+            ]}],
+            extras: [BOU_WASTE_EXTRA] }
+        ]},
+        { id: 'zed', name: 'Zednické práce',
+          matNote: 'Materiál zahrnuje omítkovou nebo potěrovou směs a materiál doplňků.',
+          types: [
+          { name: 'Vnitřní omítky', area: 'walls', labour: [0, 0], mat: [],
+            opts: [{ id: 'plaster', label: 'Skladba', choices: [
+              ST('Jádro 15 mm + štuk 3 mm (ručně)', 'jádro + štuk', { labour: [310, 730], mat: [M('omit', 'Jádrová omítka Knauf MV2 (15 mm)', 21, 'kg', 4.13), PLASTER_FINISH] }),
+              ST('Jen štuk na staré jádro', 'jen štuk', { labour: [150, 350], mat: [PLASTER_FINISH] }),
+              ST('Strojní sádrová 10 mm', 'strojní sádrová omítka', { labour: [160, 380], mat: [M('omit', 'Sádrová omítka strojní', 10, 'kg', 7)] }) // materiál odhad – ověřit
+            ]}],
+            extras: [
+              ['Penetrace', [20, 30], [MGRUNT(0.1)]],
+              ['Rohové lišty', [20, 40], [M('ost', 'Rohová lišta', 0.8, 'm', 20)]]                // odhad – ověřit
+            ] },
+          { name: 'Potěr podlahy', area: 'floor', labour: [0, 0], mat: [],
+            opts: [
+              { id: 'druh', label: 'Druh potěru', choices: [
+                ST('Cementový potěr, míchaný', 'cementový potěr', { labour: [150, 250], mat: [M('poter', 'Cementový potěr Precit', 20, 'kg', 3.5, 'l')] }), // práce odhad – ověřit
+                ST('Litý anhydrit', 'litý anhydrit', { labour: [120, 350], mat: [M('poter', 'Litý anhydritový potěr', 1, 'm²', 180)] })             // mobetony komplet 300–550; rozdělení odhad – ověřit
+              ]},
+              { id: 'thk', label: 'Tloušťka (cementový potěr)', when: ['druh', 0], def: 1, choices: [
+                ST('4 cm', '4 cm', { layers: 4 }),
+                ST('5 cm', '5 cm', { layers: 5 }),
+                ST('6 cm', '6 cm', { layers: 6 })
+              ]}
+            ],
+            extras: [] }
         ]}
       ],
       minOrder: 5000,
@@ -1507,7 +2172,7 @@
     };
 
     var $ = function (id) { return document.getElementById(id); };
-    var state = { s: 0, t: 0, mode: 'room', extras: {}, material: true,
+    var state = { s: 0, t: 0, mode: 'room', extras: {}, opts: {}, items: [], material: true,
                   openings: [{ k: 'window', w: 1.2, h: 1.5, n: 1 }, { k: 'door', w: 0.8, h: 2.0, n: 1 }] };
 
     function svc() { return PRICING.services[state.s]; }
@@ -1527,10 +2192,19 @@
         return '<label class="calc-option"><input type="radio" name="calc-type" value="' + i + '"' + (i === state.t ? ' checked' : '') + ' /> ' + esc(t.name) + '</label>';
       }).join('');
 
-      var ex = typ().extras.map(function (e, i) {
-        return '<label class="calc-option"><input type="checkbox" data-e="' + i + '"' + (state.extras[i] ? ' checked' : '') + ' /> ' + esc(e[0]) + '<small>+' + e[1] + ' Kč/m²</small></label>';
+      $('calc-opts').innerHTML = (typ().opts || []).filter(optOn).map(function (o) {
+        return '<div class="calc-optgroup"><p class="contact-label">' + esc(o.label) + '</p><div class="calc-options">' +
+          o.choices.map(function (c, i) {
+            var l = c.labour ? '<small>+' + (c.labour[0] === c.labour[1] ? c.labour[0] : c.labour[0] + '–' + c.labour[1]) + ' Kč/m²</small>' : '';
+            return '<label class="calc-option"><input type="radio" name="calc-opt-' + o.id + '" data-opt="' + o.id + '" value="' + i + '"' + (sel(o) === i ? ' checked' : '') + ' /> ' + esc(c.n) + l + '</label>';
+          }).join('') + '</div></div>';
       }).join('');
-      ex += '<label class="calc-option"><input type="checkbox" id="calc-material"' + (state.material ? ' checked' : '') + ' /> Včetně materiálu</label>';
+
+      var ex = typ().extras.map(function (e, i) {
+        var l = lr(e[1]);
+        return '<label class="calc-option"><input type="checkbox" data-e="' + i + '"' + (state.extras[i] ? ' checked' : '') + ' /> ' + esc(e[0]) + '<small>+' + (l[0] === l[1] ? l[0] : l[0] + '–' + l[1]) + ' Kč/' + (e[3] === 'w' ? 'm³ suti' : 'm²') + '</small></label>';
+      }).join('');
+      if (!svc().noMat) ex += '<label class="calc-option"><input type="checkbox" id="calc-material"' + (state.material ? ' checked' : '') + ' /> Včetně materiálu</label>';
       $('calc-extras').innerHTML = ex;
 
       var manual = typ().area === 'manual';
@@ -1583,59 +2257,154 @@
       return wallNet + floor; // both
     }
 
+    var GROUPS = [['desky', 'Desky'], ['prof', 'Profily a závěsy'], ['dlaz', 'Dlaždice / obklad'], ['spoj', 'Spojovací a tmelicí materiál'],
+                  ['lep', 'Lepidla a stěrky'], ['spar', 'Spárovací hmota'], ['hydro', 'Hydroizolace a penetrace'], ['izol', 'Izolace'],
+                  ['kotvy', 'Kotvy a výztuž'], ['omit', 'Omítky'], ['poter', 'Potěrová směs'], ['barva', 'Barvy'], ['ost', 'Ostatní materiál']];
+    function lr(x) { return typeof x === 'number' ? [x, x] : x; }
+    function emptyGroups() { var g = {}; GROUPS.forEach(function (x) { g[x[0]] = 0; }); return g; }
+    function sel(o) { var v = state.opts[o.id]; return v === undefined ? (o.def || 0) : v; }
+    function optOn(o) { return !o.when || (state.opts[o.when[0]] || 0) === o.when[1]; }
+    function sumGroups(g) { return GROUPS.reduce(function (s, x) { return s + (g[x[0]] || 0); }, 0); }
+
+    // Výpočet jedné práce: práce = základ + příplatky voleb; materiál = spotřeba × cena × přirážka.
     function compute() {
       var t = typ(), a = area();
       if (!(a > 0)) return null;
-      var add = 0, names = [];
-      t.extras.forEach(function (e, i) { if (state.extras[i]) { add += e[1]; names.push(e[0]); } });
-      var mat = state.material ? t.mat : 0;
-      var lo = a * (t.min + mat + add), hi = a * (t.max + mat + add);
-      var k = $('calc-vat').checked ? 1 + PRICING.vat : 1;
-      lo = Math.max(lo, PRICING.minOrder); hi = Math.max(hi, PRICING.minOrder);
-      return { area: a, labour: [a * (t.min + add), a * (t.max + add)], mat: a * mat,
-               lo: round100(lo * k), hi: round100(hi * k), vat: k > 1, extras: names };
+      var lab = t.labour.slice(), items = t.mat.slice(), layers = 1, board = 0, waste = t.waste || 0, d = [];
+      (t.opts || []).filter(optOn).forEach(function (o) {
+        var c = o.choices[sel(o)];
+        if (c.labour) { lab[0] += c.labour[0]; lab[1] += c.labour[1]; }
+        if (c.mat) items = items.concat(c.mat);
+        if (c.board) board = c.board;
+        if (c.layers) layers = c.layers;
+        if (c.waste) waste += c.waste;
+        if (c.d) d.push(c.d);
+      });
+      t.extras.forEach(function (e, i) {
+        if (!state.extras[i]) return;
+        var l = lr(e[1]), m = e[3] === 'w' ? waste : 1; lab[0] += l[0] * m; lab[1] += l[1] * m;
+        if (e[2]) items = items.concat(e[2]);
+        d.push(e[0]);
+      });
+      var g = emptyGroups(), sides = t.sides || 1, k = PRICING.matMarkup;
+      if (state.material) {
+        if (board) g.desky = a * BOARD_WASTE * layers * sides * board * k;
+        items.forEach(function (it) {
+          g[it.g] += a * it.q * (it.l ? layers * sides : it.s ? sides : 1) * it.p * k;
+        });
+      }
+      return { title: svc().name + ' – ' + t.name, desc: d.join(', '), area: a, matNote: t.matNote || svc().matNote, noMat: !!svc().noMat,
+               labour: [a * lab[0], a * lab[1]], matGroups: g, material: state.material };
+    }
+
+    function vk() { return $('calc-vat').checked ? 1 + PRICING.vat : 1; }
+    function itemRange(it) { var m = sumGroups(it.matGroups); return [it.labour[0] + m, it.labour[1] + m]; }
+    function fmtM2(n) { return n.toLocaleString('cs-CZ', { maximumFractionDigits: 1 }); }
+
+    function groupRows(g, k) {
+      var detail = GROUPS.some(function (x) { return x[0] !== 'ost' && g[x[0]] > 0; });
+      if (!detail) return '';
+      return GROUPS.filter(function (x) { return g[x[0]] > 0; }).map(function (x) {
+        return '<li class="calc-sub"><span>' + x[1] + '</span><strong>' + fmt(g[x[0]] * k) + '</strong></li>';
+      }).join('');
+    }
+
+    // Rozpis práce + materiálu (volitelně po skupinách)
+    function breakdownRows(labour, g, material, k, hasExtras, noMat) {
+      return '<li><span>Práce' + (hasExtras ? ' a doplňky' : '') + '</span><strong>' + fmt(labour[0] * k) + ' – ' + fmt(labour[1] * k) + '</strong></li>' +
+        (noMat ? '' : '<li><span>Materiál</span><strong>' + (material ? fmt(sumGroups(g) * k) : 'ne') + '</strong></li>' +
+        (material ? groupRows(g, k) : ''));
     }
 
     function update() {
       var usesOpen = !$('calc-openings').classList.contains('calc-hidden');
       var open = usesOpen ? openArea() : 0;
       $('calc-open-sum').textContent = 'Odečteno: ' + open.toLocaleString('cs-CZ', { maximumFractionDigits: 2 }) + ' m²';
-      var r = compute(), price = $('calc-price'), bd = $('calc-breakdown');
+      var r = compute(), price = $('calc-price'), bd = $('calc-breakdown'), k = vk(), vat = k > 1;
+      var items = state.items, min = PRICING.minOrder;
+      var hasItems = items.length > 0;
+
+      $('calc-add').classList.toggle('calc-hidden', !r);
+      $('calc-matnote').classList.toggle('calc-hidden', !(r && r.matNote && (state.material || r.noMat)));
+      if (r) $('calc-matnote').textContent = r.matNote;
+
       if (!r) {
         price.textContent = '—';
         bd.innerHTML = '';
         $('calc-note').textContent = 'Zadejte kladné rozměry nebo plochu, abychom mohli cenu spočítat.';
-        $('calc-mailto').href = 'mailto:info@mbkbau.cz?subject=' + encodeURIComponent('Poptávka – ' + svc().name);
-        return;
+      } else {
+        var rg = itemRange(r), lo = Math.max(rg[0], min), hi = Math.max(rg[1], min);
+        $('calc-note').textContent = 'Orientační odhad, přesnou cenu stanovíme po prohlídce.' + (vat ? '' : ' Ceny jsou bez DPH.');
+        price.textContent = 'cca ' + round100(lo * k).toLocaleString('cs-CZ') + ' – ' + round100(hi * k).toLocaleString('cs-CZ') + '\u00a0Kč';
+        bd.innerHTML =
+          '<li><span>Plocha</span><strong>' + fmtM2(r.area) + ' m²</strong></li>' +
+          (open > 0 ? '<li><span>Odečteno (okna, dveře)</span><strong>− ' + open.toLocaleString('cs-CZ', { maximumFractionDigits: 2 }) + ' m²</strong></li>' : '') +
+          breakdownRows(r.labour, r.matGroups, r.material, k, false, r.noMat);
       }
-      $('calc-note').textContent = 'Orientační odhad, přesnou cenu stanovíme po prohlídce.' +
-        (r.vat ? '' : ' Ceny jsou bez DPH.');
-      price.textContent = 'cca ' + r.lo.toLocaleString('cs-CZ') + ' – ' + r.hi.toLocaleString('cs-CZ') + ' Kč';
-      var k = r.vat ? 1 + PRICING.vat : 1;
-      bd.innerHTML =
-        '<li><span>Plocha</span><strong>' + r.area.toLocaleString('cs-CZ', { maximumFractionDigits: 1 }) + ' m²</strong></li>' +
-        (open > 0 ? '<li><span>Odečteno (okna, dveře)</span><strong>− ' + open.toLocaleString('cs-CZ', { maximumFractionDigits: 2 }) + ' m²</strong></li>' : '') +
-        '<li><span>Práce' + (r.extras.length ? ' a doplňky' : '') + '</span><strong>' + fmt(r.labour[0] * k) + ' – ' + fmt(r.labour[1] * k) + '</strong></li>' +
-        '<li><span>Materiál</span><strong>' + (state.material ? fmt(r.mat * k) : 'ne') + '</strong></li>';
 
-      var body = [
-        'Dobrý den,', '',
-        'poptávám: ' + svc().name + ' – ' + typ().name,
-        'Plocha: ' + r.area.toLocaleString('cs-CZ', { maximumFractionDigits: 1 }) + ' m²',
-        (open > 0 && openText() ? 'Okna/dveře: ' + openText() : null),
-        'Doplňky: ' + (r.extras.length ? r.extras.join(', ') : 'žádné'),
-        'Materiál: ' + (state.material ? 'ano' : 'ne'),
-        'Orientační cena z kalkulačky: ' + r.lo.toLocaleString('cs-CZ') + ' – ' + r.hi.toLocaleString('cs-CZ') + ' Kč ' + (r.vat ? 's DPH' : 'bez DPH'),
-        '', 'Prosím o přesnou nabídku.'
-      ].filter(function (x) { return x !== null; }).join('\n');
-      $('calc-mailto').href = 'mailto:info@mbkbau.cz?subject=' + encodeURIComponent('Poptávka – ' + svc().name) +
-        '&body=' + encodeURIComponent(body);
+      // seznam položek + celkem
+      $('calc-items').classList.toggle('calc-hidden', !hasItems);
+      var tot = { labour: [0, 0], g: emptyGroups(), lo: 0, hi: 0, mat: false };
+      items.forEach(function (it) {
+        tot.labour[0] += it.labour[0]; tot.labour[1] += it.labour[1];
+        GROUPS.forEach(function (x) { tot.g[x[0]] += it.matGroups[x[0]]; });
+        var ir = itemRange(it); tot.lo += ir[0]; tot.hi += ir[1];
+        if (it.material && !it.noMat) tot.mat = true;
+      });
+      var tlo = Math.max(tot.lo, min), thi = Math.max(tot.hi, min);
+      $('calc-item-list').innerHTML = items.map(function (it, i) {
+        var ir = itemRange(it);
+        return '<li class="calc-item"><b>' + esc(it.title) + '</b>' +
+          '<em>' + fmt(round100(ir[0] * k)) + ' – ' + fmt(round100(ir[1] * k)) + '</em>' +
+          '<button type="button" class="calc-item-rm" data-item-rm="' + i + '" aria-label="Odebrat položku">×</button>' +
+          '<small>' + fmtM2(it.area) + ' m²' + (it.desc ? ' · ' + esc(it.desc) : '') + (it.material || it.noMat ? '' : ' · bez materiálu') + '</small></li>';
+      }).join('');
+      $('calc-total').innerHTML = hasItems ?
+        '<li><span>Celkem</span><strong>' + fmt(round100(tlo * k)) + ' – ' + fmt(round100(thi * k)) + '</strong></li>' +
+        (tot.lo < min ? '<li><span>Minimální zakázka</span><strong>' + fmt(min * k) + '</strong></li>' : '') +
+        breakdownRows(tot.labour, tot.g, tot.mat, k, false, !tot.mat) : '';
+
+      // plovoucí lišta (mobil)
+      $('calc-bar-price').textContent = hasItems ? 'Celkem ' + round100(tlo * k).toLocaleString('cs-CZ') + ' – ' + round100(thi * k).toLocaleString('cs-CZ') + '\u00a0Kč' : (r ? price.textContent : '—');
+
+      // e-mail
+      var f = function (n) { return n.toLocaleString('cs-CZ'); }, ds = vat ? 's DPH' : 'bez DPH';
+      var lines;
+      if (hasItems) {
+        lines = ['Dobrý den,', '', 'poptávám:'];
+        items.forEach(function (it, i) {
+          var ir = itemRange(it);
+          lines.push((i + 1) + '. ' + it.title + (it.desc ? ' (' + it.desc + ')' : '') + ', ' + fmtM2(it.area) + ' m², ' +
+            f(round100(ir[0] * k)) + ' – ' + f(round100(ir[1] * k)) + ' Kč' + (it.material || it.noMat ? '' : ', bez materiálu'));
+        });
+        if (usesOpen && openText()) lines.push('Okna/dveře: ' + openText());
+        lines.push('Celkem z kalkulačky: ' + f(round100(tlo * k)) + ' – ' + f(round100(thi * k)) + ' Kč ' + ds, '', 'Prosím o přesnou nabídku.');
+      } else if (r) {
+        var rg2 = itemRange(r), l2 = Math.max(rg2[0], min), h2 = Math.max(rg2[1], min);
+        lines = ['Dobrý den,', '', 'poptávám: ' + r.title, 'Plocha: ' + fmtM2(r.area) + ' m²',
+          (open > 0 && openText() ? 'Okna/dveře: ' + openText() : null),
+          'Doplňky: ' + (r.desc || 'žádné'),
+          (r.noMat ? null : 'Materiál: ' + (state.material ? 'ano' : 'ne')),
+          'Orientační cena z kalkulačky: ' + f(round100(l2 * k)) + ' – ' + f(round100(h2 * k)) + ' Kč ' + ds,
+          '', 'Prosím o přesnou nabídku.'];
+      }
+      var href = 'mailto:info@mbkbau.cz?subject=' + encodeURIComponent('Poptávka – ' + (hasItems ? 'kalkulačka' : svc().name));
+      if (lines) href += '&body=' + encodeURIComponent(lines.filter(function (x) { return x !== null; }).join('\n'));
+      $('calc-mailto').href = href;
     }
+
 
     function refresh() { renderChoices(); renderOpenings(); update(); }
 
     var card = document.querySelector('.calc-card');
     card.addEventListener('click', function (e) {
+      if (e.target.closest('#calc-add')) {
+        var r = compute();
+        if (r) { state.items.push(r); update(); }
+        return;
+      }
+      var irm = e.target.closest('[data-item-rm]');
+      if (irm) { state.items.splice(+irm.getAttribute('data-item-rm'), 1); update(); return; }
       var rm = e.target.closest('[data-remove]');
       if (rm) { state.openings.splice(+rm.getAttribute('data-remove'), 1); renderOpenings(); update(); return; }
       var b = e.target.closest('.calc-chip');
@@ -1645,12 +2414,17 @@
         state.openings.push({ k: k, w: d.w, h: d.h, n: 1 });
         renderOpenings(); update(); return;
       }
-      if (b.hasAttribute('data-s')) { state.s = +b.getAttribute('data-s'); state.t = 0; state.extras = {}; refresh(); }
+      if (b.hasAttribute('data-s')) { state.s = +b.getAttribute('data-s'); state.t = 0; state.extras = {}; state.opts = {}; refresh(); }
       else if (b.hasAttribute('data-mode')) { state.mode = b.getAttribute('data-mode'); refresh(); }
     });
     card.addEventListener('change', function (e) {
       var el = e.target;
-      if (el.name === 'calc-type') { state.t = +el.value; state.extras = {}; refresh(); }
+      if (el.name === 'calc-type') { state.t = +el.value; state.extras = {}; state.opts = {}; refresh(); }
+      else if (el.hasAttribute('data-opt')) {
+        state.opts[el.getAttribute('data-opt')] = +el.value;
+        if ((typ().opts || []).some(function (o) { return o.when; })) renderChoices();
+        update();
+      }
       else if (el.hasAttribute('data-e')) { state.extras[el.getAttribute('data-e')] = el.checked; update(); }
       else if (el.id === 'calc-material') { state.material = el.checked; update(); }
       else update();
@@ -1660,6 +2434,18 @@
       if (el.hasAttribute && el.hasAttribute('data-o')) state.openings[+el.getAttribute('data-o')][el.getAttribute('data-f')] = el.value;
       update();
     });
+
+    // lišta s cenou: vidět v sekci, dokud není na obrazovce box s cenou
+    if ('IntersectionObserver' in window) {
+      var inSec = false, resSeen = false, bar = $('calc-bar');
+      var sync = function () { bar.classList.toggle('is-on', inSec && !resSeen); };
+      var obs = new IntersectionObserver(function (en) {
+        en.forEach(function (x) { if (x.target.id === 'calc-result') resSeen = x.isIntersecting; else inSec = x.isIntersecting; });
+        sync();
+      });
+      obs.observe($('kalkulacka'));
+      obs.observe($('calc-result'));
+    }
 
     refresh();
   })();
@@ -1722,8 +2508,8 @@
       <div class="footer-col">
         <h4>Odkazy</h4>
         <ul>
-          <li><a href="#pristup">Náš přístup</a></li>
           <li><a href="#co-delame">Služby</a></li>
+          <li><a href="#pristup">Náš přístup</a></li>
           <li><a href="#kalkulacka">Kalkulačka</a></li>
           <li><a href="#kontakt">Kontakt</a></li>
           <li><a href="#">Ochrana údajů</a></li>
@@ -1784,11 +2570,10 @@
         var qa = function (s) { return gsap.utils.toArray(s); };
 
         /* ── Hero intro ── */
-        var h1 = q('.hero h1');
+        var h1 = q('.hero-slide.is-active h1');
         var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
         gsap.set('.hero-content', { visibility: 'visible' });
-        tl.from('.hero-bg img', { scale: 1.15, duration: 2, ease: 'power2.out' }, 0)
-          .from('.hero-eyebrow', { y: 20, autoAlpha: 0, duration: 0.8 }, 0.2);
+        tl.from('.hero-slide.is-active .hero-eyebrow', { y: 20, autoAlpha: 0, duration: 0.8 }, 0.2);
         SplitText.create(h1, {
           type: 'lines,words',
           mask: 'lines',
@@ -1799,7 +2584,7 @@
             });
           }
         });
-        tl.from(['.hero-subtitle', '.hero-ctas'], { y: 24, autoAlpha: 0, duration: 0.9, stagger: 0.15 }, 1.0);
+        tl.from(['.hero-slide.is-active .hero-subtitle', '.hero-slide.is-active .hero-ctas'], { y: 24, autoAlpha: 0, duration: 0.9, stagger: 0.15 }, 1.0);
 
         /* ── Section headings ── */
         qa('.approach-text h2, .calc-card h3, .contact-card h3').forEach(function (el) {
@@ -1867,15 +2652,6 @@
               scrollTrigger: { trigger: '.refs-grid', start: 'top 85%', toggleActions: 'play none none reverse' }
             });
           }
-          qa('[data-count]').forEach(function (el) {
-            var end = parseInt(el.getAttribute('data-count'), 10);
-            var o = { val: end };
-            gsap.from(o, {
-              val: 0, duration: 1.8, ease: 'power2.out', snap: { val: 1 },
-              onUpdate: function () { el.textContent = Math.round(o.val); },
-              scrollTrigger: { trigger: '.refs-stats', start: 'top 90%', toggleActions: 'play none none reverse' }
-            });
-          });
           gsap.from('.ref-quote', {
             y: 20, autoAlpha: 0, duration: 0.9, ease: 'power3.out',
             scrollTrigger: { trigger: '.ref-quote', start: 'top 88%', toggleActions: 'play none none reverse' }
@@ -1899,7 +2675,7 @@
 
       /* ── Parallax (desktop only) ── */
       mm.add('(prefers-reduced-motion: no-preference) and (min-width: 768px)', function () {
-        gsap.to('.hero-bg img', {
+        gsap.to('.hero-bg', {
           yPercent: 15, ease: 'none',
           scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
         });
@@ -1922,5 +2698,125 @@
   })();
 </script>
 
+<script>
+  // Hero – přepínač oborů
+  (function () {
+    var hero = document.querySelector('.hero');
+    if (!hero) return;
+    var imgs = hero.querySelectorAll('.hero-bg-img');
+    var slides = hero.querySelectorAll('.hero-slide');
+    var dots = hero.querySelectorAll('.hero-dot');
+    var dotsWrap = hero.querySelector('.hero-dots');
+    var n = slides.length, cur = 0, timer = null, hovering = false;
+    var INTERVAL = 7000, INTRO_DELAY = 2000;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function show(i) {
+      cur = (i + n) % n;
+      for (var k = 0; k < n; k++) {
+        var on = k === cur;
+        imgs[k].classList.toggle('is-active', on);
+        slides[k].classList.toggle('is-active', on);
+        dots[k].classList.toggle('is-active', on);
+        if (on) { slides[k].removeAttribute('inert'); slides[k].removeAttribute('aria-hidden'); dots[k].setAttribute('aria-current', 'true'); }
+        else { slides[k].setAttribute('inert', ''); slides[k].setAttribute('aria-hidden', 'true'); dots[k].removeAttribute('aria-current'); }
+      }
+      // restart progress line
+      dotsWrap.classList.remove('is-playing');
+      void dotsWrap.offsetWidth;
+      if (!reduce) dotsWrap.classList.add('is-playing');
+    }
+
+    function stop() { clearTimeout(timer); timer = null; }
+    function schedule(delay) {
+      stop();
+      if (reduce || hovering || document.hidden) return;
+      timer = setTimeout(function () { show(cur + 1); schedule(INTERVAL); }, delay);
+    }
+    function manual(i) { show(i); schedule(INTERVAL); }
+
+    hero.querySelectorAll('.hero-arrow').forEach(function (b) {
+      b.addEventListener('click', function () { manual(cur + parseInt(b.dataset.dir, 10)); });
+    });
+    dots.forEach(function (d, i) { d.addEventListener('click', function () { manual(i); }); });
+
+    hero.addEventListener('mouseenter', function () { hovering = true; hero.classList.add('is-paused'); stop(); });
+    hero.addEventListener('mouseleave', function () { hovering = false; hero.classList.remove('is-paused'); schedule(INTERVAL); });
+    hero.addEventListener('focusin', function () { hovering = true; hero.classList.add('is-paused'); stop(); });
+    hero.addEventListener('focusout', function () { hovering = false; hero.classList.remove('is-paused'); schedule(INTERVAL); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else schedule(INTERVAL); });
+
+    hero.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { manual(cur - 1); }
+      else if (e.key === 'ArrowRight') { manual(cur + 1); }
+    });
+
+    var sx = null;
+    hero.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') sx = e.clientX; });
+    hero.addEventListener('pointerup', function (e) {
+      if (sx === null) return;
+      var dx = e.clientX - sx; sx = null;
+      if (Math.abs(dx) >= 50) manual(cur + (dx < 0 ? 1 : -1));
+    });
+    hero.addEventListener('pointercancel', function () { sx = null; });
+
+    window.addEventListener('load', function () {
+      imgs.forEach(function (im) { var p = new Image(); p.src = im.currentSrc || im.src; });
+    });
+
+    show(0);
+    dotsWrap.classList.remove('is-playing');
+    // autoplay (i průběhová linka) až po skončení intro animace
+    timer = setTimeout(function () { show(0); schedule(INTERVAL); }, INTRO_DELAY);
+  })();
+</script>
+
+<script>
+  // Interaktivní služby
+  (function () {
+    var list = document.querySelector('.services-list');
+    var main = document.getElementById('svc-main'), inset = document.getElementById('svc-inset');
+    var title = document.getElementById('sp-title'), text = document.getElementById('sp-text');
+    if (!list || !main || !inset) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var token = 0;
+    function swap(li) {
+      var m = li.dataset.main, n = li.dataset.inset, alt = li.dataset.alt, t = ++token;
+      function apply() { main.src = m; main.alt = alt; inset.src = n; inset.alt = alt + ' – detail'; }
+      if (!window.gsap || reduce) { apply(); return; }
+      gsap.to([main, inset], { autoAlpha: 0, duration: 0.25, overwrite: 'auto', onComplete: function () {
+        if (t !== token) return;
+        apply();
+        Promise.all([main, inset].map(function (im) { return im.decode ? im.decode().catch(function () {}) : null; }))
+          .then(function () { if (t === token) gsap.to([main, inset], { autoAlpha: 1, duration: 0.3, overwrite: 'auto' }); });
+      } });
+    }
+    list.addEventListener('click', function (e) {
+      var btn = e.target.closest('.service-btn');
+      if (!btn) return;
+      var li = btn.parentNode;
+      if (li.classList.contains('is-active')) return;
+      list.querySelectorAll('li').forEach(function (x) {
+        var on = x === li;
+        x.classList.toggle('is-active', on);
+        x.querySelector('.service-btn').setAttribute('aria-pressed', on);
+      });
+      title.textContent = btn.querySelector('.service-name').textContent;
+      text.textContent = li.querySelector('.service-desc p').textContent;
+      swap(li);
+    });
+    var sec = document.getElementById('co-delame');
+    if ('IntersectionObserver' in window && sec) {
+      var io = new IntersectionObserver(function (en) {
+        if (!en[0].isIntersecting) return;
+        io.disconnect();
+        list.querySelectorAll('li').forEach(function (li) {
+          new Image().src = li.dataset.main; new Image().src = li.dataset.inset;
+        });
+      }, { rootMargin: '300px' });
+      io.observe(sec);
+    }
+  })();
+</script>
 </body>
 </html>
