@@ -27,7 +27,7 @@
       --radius:       0.75rem;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: clip; }
     section[id] { scroll-margin-top: 4.5rem; }
 
     body {
@@ -35,7 +35,8 @@
       background: var(--surface);
       color: var(--on-surface);
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
+      overflow-x: clip;
+      max-width: 100%;
     }
 
     /* ─── Utility ──────────────────────────────────────────────── */
@@ -165,6 +166,7 @@
     }
 
     .nav-toggle:checked ~ .mobile-menu { display: flex; }
+    .mobile-menu { align-items: center; text-align: center; }
 
     .mobile-menu a {
       text-decoration: none;
@@ -452,6 +454,172 @@
       min-width: 1.5rem;
     }
 
+    /* ─── Reference ────────────────────────────────────────────── */
+    .refs-section {
+      background: var(--on-surface);
+      padding: 6rem 0;
+      overflow: hidden;
+    }
+
+    .refs-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .refs-head {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .refs-section .approach-text h2 { color: #fff; margin-bottom: 0; }
+
+    .refs-stats { display: flex; gap: 2.5rem; flex-wrap: wrap; }
+
+    .refs-stat-num {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .refs-stat .contact-label { color: rgba(255,255,255,0.55); margin-bottom: 0; }
+
+    /* mobile: swipe carousel */
+    .refs-grid {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      margin: 0 -2rem;
+      padding: 0 2rem;
+      scroll-padding: 0 2rem;
+      scrollbar-width: none;
+      overscroll-behavior-x: contain;
+    }
+    .refs-grid::-webkit-scrollbar { display: none; }
+
+    .ref-card {
+      position: relative;
+      flex: 0 0 80%;
+      aspect-ratio: 4 / 5;
+      scroll-snap-align: start;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #2a2929;
+    }
+
+    .ref-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .ref-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(28,27,27,0.92) 0%, rgba(28,27,27,0.35) 45%, rgba(28,27,27,0) 70%);
+      transition: opacity 0.4s;
+    }
+
+    .ref-meta {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      z-index: 1;
+      padding: 1.5rem 1.5rem 1.5rem 1.75rem;
+    }
+
+    .ref-meta::before {
+      content: '';
+      position: absolute;
+      left: 0; bottom: 1.5rem;
+      width: 4px;
+      height: 0;
+      background: var(--primary);
+      transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .ref-cat {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .ref-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .ref-place { font-size: 0.875rem; color: rgba(255,255,255,0.6); }
+
+    .ref-card--tall .ref-title { font-size: 1.5rem; }
+
+    @media (hover: hover) {
+      .ref-card:hover img { transform: scale(1.06); }
+      .ref-card:hover::after { background: linear-gradient(to top, rgba(28,27,27,0.97) 0%, rgba(28,27,27,0.5) 55%, rgba(28,27,27,0.1) 80%); }
+      .ref-card:hover .ref-meta::before { height: calc(100% - 3rem); }
+    }
+
+    .ref-quote {
+      margin-top: 4rem;
+      max-width: 52rem;
+    }
+
+    .ref-quote-mark {
+      display: block;
+      font-size: 6rem;
+      font-weight: 900;
+      line-height: 0.6;
+      height: 3rem;
+      color: var(--primary);
+    }
+
+    .ref-quote-stack { display: grid; }
+    .ref-quote-slide {
+      grid-area: 1 / 1;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease, visibility 0s linear 0.6s;
+    }
+    .ref-quote-slide.is-active {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.6s ease;
+    }
+    .ref-quote-dots { display: flex; gap: 0.5rem; margin-top: 1.5rem; }
+    .ref-quote-dots button {
+      width: 0.6rem; height: 0.6rem; padding: 0; border: 0; border-radius: 50%;
+      background: rgba(255,255,255,0.3); cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .ref-quote-dots button.is-active { background: var(--primary); transform: scale(1.25); }
+    .ref-quote-dots button:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+
+    .ref-quote p {
+      font-size: 1.25rem;
+      font-weight: 400;
+      line-height: 1.6;
+      color: #fff;
+      margin-bottom: 1.25rem;
+    }
+
+    .ref-quote .contact-label { color: rgba(255,255,255,0.55); }
+
     /* ─── Contact Section ──────────────────────────────────────── */
     .contact-section {
       background: var(--surface-low);
@@ -554,6 +722,15 @@
     }
 
     .calc-card .contact-heading { margin-bottom: 1.75rem; }
+
+    /* mobil: nadpis, pak formulář, cena až na konci */
+    @media (max-width: 767px) {
+      .calc-section { padding-left: 1rem; padding-right: 1rem; }
+      .calc-card { padding: 1.5rem 1.25rem; }
+      .calc-head { display: contents; }
+      .calc-head .calc-result { order: 2; }
+      .calc-card .contact-heading { margin-bottom: 0; }
+    }
 
     .calc-result {
       background: var(--surface);
@@ -665,6 +842,26 @@
     }
 
     .calc-field label { display: block; }
+
+    #calc-openings { margin-top: 1rem; }
+    .calc-open-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem 0.75rem;
+      align-items: end;
+      margin-top: 0.5rem;
+    }
+    .calc-open-row .calc-field label { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0; }
+    .calc-open-name { grid-column: 1 / 3; grid-row: 1; font-weight: 600; color: var(--on-surface); }
+    .calc-open-remove {
+      grid-column: 3; grid-row: 1; justify-self: end;
+      font: inherit; font-size: 1.25rem; line-height: 1;
+      background: none; border: 0; cursor: pointer; padding: 0.25rem 0.5rem;
+      color: var(--on-surface-variant);
+    }
+    .calc-open-remove:hover { color: var(--primary); }
+    .calc-open-remove:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .calc-open-sum { margin-top: 0.5rem; text-align: right; font-size: 0.9rem; color: var(--on-surface-variant); }
 
     .calc-field input[type="number"] {
       width: 100%;
@@ -790,6 +987,26 @@
         grid-template-columns: 1fr 1fr;
       }
 
+      /* Reference */
+      .refs-head {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+      .refs-stats { flex-wrap: nowrap; gap: 3rem; }
+      .refs-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 280px);
+        overflow: visible;
+        margin: 0;
+        padding: 0;
+        gap: 1rem;
+      }
+      .ref-card { flex: none; aspect-ratio: auto; }
+      .ref-card--tall { grid-row: span 2; }
+      .ref-card--wide { grid-column: span 2; }
+
       /* Contact card */
       .contact-card {
         grid-template-columns: 1fr 2fr;
@@ -809,8 +1026,14 @@
       }
 
       .calc-fields {
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(3, 1fr);
       }
+
+      .calc-open-row {
+        grid-template-columns: 5rem 1fr 1fr 1fr auto;
+      }
+      .calc-open-name, .calc-open-remove { grid-column: auto; grid-row: auto; align-self: end; height: 3.4rem; display: flex; align-items: center; padding-block: 0; }
+      .calc-open-row .calc-field input[type="number"] { height: 3.4rem; box-sizing: border-box; }
 
       /* Footer */
       .footer-inner {
@@ -835,8 +1058,8 @@
 <body>
 
 <!-- ─── Header ─────────────────────────────────────────────── -->
-<input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
 <header class="site-header">
+  <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
   <div class="nav-inner">
     <a href="#" class="logo-link">
       <img src="starting-sources/mbkbau.png" alt="MBK BAU" class="logo-img" />
@@ -846,8 +1069,8 @@
       <ul class="nav-links">
         <li><a href="#pristup">Náš přístup</a></li>
         <li><a href="#co-delame">Služby</a></li>
+        <li><a href="#reference">Reference</a></li>
         <li><a href="#kalkulacka">Kalkulačka</a></li>
-        <li><a href="#kontakt">Kontakt</a></li>
       </ul>
     </nav>
 
@@ -864,13 +1087,44 @@
   <nav class="mobile-menu" aria-label="Mobilní navigace">
     <a href="#pristup" onclick="document.getElementById('nav-toggle').checked=false">Náš přístup</a>
     <a href="#co-delame" onclick="document.getElementById('nav-toggle').checked=false">Služby</a>
+    <a href="#reference" onclick="document.getElementById('nav-toggle').checked=false">Reference</a>
     <a href="#kalkulacka" onclick="document.getElementById('nav-toggle').checked=false">Kalkulačka</a>
-    <a href="#kontakt" onclick="document.getElementById('nav-toggle').checked=false">Kontakt</a>
-    <a href="#kontakt" class="btn-primary" onclick="document.getElementById('nav-toggle').checked=false">Kontaktujte nás</a>
+    <a href="#kontakt" onclick="document.getElementById('nav-toggle').checked=false">Kontaktujte nás</a>
   </nav>
 </header>
 
 <script>
+  // Rotace referencí
+  (function () {
+    var box = document.getElementById('ref-quotes');
+    if (!box) return;
+    var slides = box.querySelectorAll('.ref-quote-slide'), dotsEl = box.querySelector('.ref-quote-dots');
+    var cur = 0, timer = null, paused = false;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var dots = Array.prototype.map.call(slides, function (_, i) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.setAttribute('aria-label', 'Reference ' + (i + 1));
+      b.addEventListener('click', function () { show(i); start(); });
+      dotsEl.appendChild(b);
+      return b;
+    });
+    function show(i) {
+      cur = (i + slides.length) % slides.length;
+      slides.forEach(function (s, j) { s.classList.toggle('is-active', j === cur); });
+      dots.forEach(function (d, j) { d.classList.toggle('is-active', j === cur); });
+    }
+    function start() {
+      clearInterval(timer);
+      if (reduce) return;
+      timer = setInterval(function () { if (!paused) show(cur + 1); }, 7000);
+    }
+    box.addEventListener('mouseenter', function () { paused = true; });
+    box.addEventListener('mouseleave', function () { paused = false; });
+    box.addEventListener('focusin', function () { paused = true; });
+    box.addEventListener('focusout', function () { paused = false; });
+    show(0); start();
+  })();
+
   // Show CTA button on desktop, hide hamburger label
   (function() {
     var mql = window.matchMedia('(min-width: 768px)');
@@ -981,12 +1235,102 @@
   </div>
 </section>
 
+<!-- ─── Reference ──────────────────────────────────────────── -->
+<!-- MOCK: nahradit reálnými zakázkami -->
+<section class="refs-section" id="reference">
+  <div class="refs-inner">
+    <div class="refs-head">
+      <div class="approach-text">
+        <span class="section-eyebrow">Reference</span>
+        <h2>Stavby, za kterými si stojíme.</h2>
+      </div>
+      <div class="refs-stats">
+        <div class="refs-stat"><p class="refs-stat-num"><span data-count="120">120</span>+</p><p class="contact-label">realizací</p></div>
+        <div class="refs-stat"><p class="refs-stat-num"><span data-count="15">15</span></p><p class="contact-label">let praxe</p></div>
+        <div class="refs-stat"><p class="refs-stat-num"><span data-count="5">5</span></p><p class="contact-label">oborů</p></div>
+      </div>
+    </div>
+
+    <div class="refs-grid">
+      <article class="ref-card ref-card--tall">
+        <img src="images/about-main.jpg" alt="Rekonstrukce rodinného domu" loading="lazy" />
+        <div class="ref-meta">
+          <span class="ref-cat">Zednické práce</span>
+          <h3 class="ref-title">Rekonstrukce rodinného domu</h3>
+          <p class="ref-place">Znojmo · 2025</p>
+        </div>
+      </article>
+      <article class="ref-card">
+        <img src="images/services-inset.jpg" alt="Fasáda bytového domu" loading="lazy" />
+        <div class="ref-meta">
+          <span class="ref-cat">Fasády a zateplení</span>
+          <h3 class="ref-title">Zateplení bytového domu</h3>
+          <p class="ref-place">Moravský Krumlov · 2024</p>
+        </div>
+      </article>
+      <article class="ref-card">
+        <img src="images/about-inset.jpg" alt="Sádrokartonové příčky" loading="lazy" />
+        <div class="ref-meta">
+          <span class="ref-cat">Sádrokartony</span>
+          <h3 class="ref-title">Podkroví s novými příčkami</h3>
+          <p class="ref-place">Hrušovany nad Jevišovkou · 2025</p>
+        </div>
+      </article>
+      <article class="ref-card ref-card--wide">
+        <img src="images/hero.jpg" alt="Malování kancelářských prostor" loading="lazy" />
+        <div class="ref-meta">
+          <span class="ref-cat">Malířské práce</span>
+          <h3 class="ref-title">Kancelářské prostory</h3>
+          <p class="ref-place">Znojmo · 2024</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="ref-quote" id="ref-quotes">
+      <span class="ref-quote-mark" aria-hidden="true">“</span>
+      <div class="ref-quote-stack" aria-live="off">
+        <figure class="ref-quote-slide is-active">
+          <blockquote>
+            <p>Práce byly hotové v termínu, na stavbě byl vždy pořádek a výsledek předčil naše očekávání. Určitě doporučuji.</p>
+          </blockquote>
+          <figcaption class="contact-label">— Jan N., rekonstrukce RD, Znojmo</figcaption>
+        </figure>
+        <figure class="ref-quote-slide">
+          <blockquote>
+            <p>Sádrokartonové podhledy a nové rozvody zvládli rychle a čistě. Komunikace byla od začátku jasná, žádné nepříjemné překvapení v ceně.</p>
+          </blockquote>
+          <figcaption class="contact-label">— Petra K., přestavba bytu, Znojmo</figcaption>
+        </figure>
+        <figure class="ref-quote-slide">
+          <blockquote>
+            <p>Zateplení fasády dokončili před zimou a dům je znatelně teplejší. Parta jednala ohleduplně i k sousedům.</p>
+          </blockquote>
+          <figcaption class="contact-label">— Martin V., zateplení fasády, Moravský Krumlov</figcaption>
+        </figure>
+        <figure class="ref-quote-slide">
+          <blockquote>
+            <p>Od bourání příček po finální malování jsme měli jednoho člověka, na kterého jsme se mohli obrátit. Přesně tak má rekonstrukce vypadat.</p>
+          </blockquote>
+          <figcaption class="contact-label">— Lucie a Tomáš H., rekonstrukce bytu, Jihlava</figcaption>
+        </figure>
+        <figure class="ref-quote-slide">
+          <blockquote>
+            <p>Potěry a omítky v novostavbě udělali precizně a v dohodnutém termínu. S radostí je doporučím dál.</p>
+          </blockquote>
+          <figcaption class="contact-label">— Josef M., novostavba RD, Hrušovany nad Jevišovkou</figcaption>
+        </figure>
+      </div>
+      <div class="ref-quote-dots" role="tablist" aria-label="Reference"></div>
+    </div>
+  </div>
+</section>
+
 <!-- ─── Kalkulačka ─────────────────────────────────────────── -->
 <section class="calc-section" id="kalkulacka">
   <div class="calc-inner">
     <div class="calc-card">
 
-      <div>
+      <div class="calc-head">
         <div class="contact-heading calc-card-heading">
           <h3>Spočítejte si&nbsp;cenu</h3>
           <p>Vyberte práci, zadejte rozměry a hned uvidíte orientační cenu.</p>
@@ -1021,18 +1365,25 @@
         <div>
           <p class="contact-label">3 · Rozměry</p>
           <div class="calc-chips" id="calc-modes">
-            <button type="button" class="calc-chip is-active" data-mode="room">Rozměry místnosti</button>
+            <button type="button" class="calc-chip is-active" data-mode="room">Zadám rozměry</button>
             <button type="button" class="calc-chip" data-mode="area">Zadám plochu (m²)</button>
           </div>
           <div class="calc-fields" id="calc-room">
             <div class="calc-field"><label class="contact-label" for="c-l">Délka (m)</label><input type="number" id="c-l" min="0" step="0.1" value="4" /></div>
             <div class="calc-field"><label class="contact-label" for="c-w">Šířka (m)</label><input type="number" id="c-w" min="0" step="0.1" value="3" /></div>
             <div class="calc-field"><label class="contact-label" for="c-h">Výška (m)</label><input type="number" id="c-h" min="0" step="0.1" value="2.6" /></div>
-            <div class="calc-field"><label class="contact-label" for="c-win">Oken</label><input type="number" id="c-win" min="0" step="1" value="1" /></div>
-            <div class="calc-field"><label class="contact-label" for="c-door">Dveří</label><input type="number" id="c-door" min="0" step="1" value="1" /></div>
           </div>
           <div class="calc-fields calc-hidden" id="calc-area" style="grid-template-columns:1fr">
             <div class="calc-field"><label class="contact-label" for="c-area">Plocha (m²)</label><input type="number" id="c-area" min="0" step="0.5" value="20" /></div>
+          </div>
+          <div id="calc-openings">
+            <p class="contact-label">Okna a dveře (odečtou se od plochy)</p>
+            <div id="calc-open-list"></div>
+            <div class="calc-chips">
+              <button type="button" class="calc-chip" data-add="window">+ Přidat okno</button>
+              <button type="button" class="calc-chip" data-add="door">+ Přidat dveře</button>
+            </div>
+            <p class="calc-open-sum" id="calc-open-sum"></p>
           </div>
         </div>
 
@@ -1135,8 +1486,8 @@
           { name: 'Barevná malba (stěny)', area: 'walls', min: 60, max: 85, mat: 25, extras: [['Penetrace', 12]] }
         ]},
         { id: 'fas', name: 'Fasády a zateplení', types: [
-          { name: 'Zateplení EPS 100 mm', area: 'manual', min: 1100, max: 1400, mat: 650, extras: [['Lešení', 120], ['Silikonová omítka', 150]] },
-          { name: 'Zateplení minerální vatou', area: 'manual', min: 1400, max: 1800, mat: 900, extras: [['Lešení', 120]] }
+          { name: 'Zateplení EPS 100 mm', area: 'walls', min: 1100, max: 1400, mat: 650, extras: [['Lešení', 120], ['Silikonová omítka', 150]] },
+          { name: 'Zateplení minerální vatou', area: 'walls', min: 1400, max: 1800, mat: 900, extras: [['Lešení', 120]] }
         ]},
         { id: 'bou', name: 'Bourací práce', types: [
           { name: 'Příčky', area: 'manual', min: 250, max: 400, mat: 0, extras: [['Odvoz suti', 80]] },
@@ -1149,12 +1500,15 @@
       ],
       minOrder: 5000,
       vat: 0.12,
-      window: 1.5,
-      door: 1.8
+      openings: {
+        window: { name: 'Okno', w: 1.2, h: 1.5 },
+        door: { name: 'Dveře', w: 0.8, h: 2.0 }
+      }
     };
 
     var $ = function (id) { return document.getElementById(id); };
-    var state = { s: 0, t: 0, mode: 'room', extras: {}, material: true };
+    var state = { s: 0, t: 0, mode: 'room', extras: {}, material: true,
+                  openings: [{ k: 'window', w: 1.2, h: 1.5, n: 1 }, { k: 'door', w: 0.8, h: 2.0, n: 1 }] };
 
     function svc() { return PRICING.services[state.s]; }
     function typ() { return svc().types[state.t]; }
@@ -1190,18 +1544,40 @@
       // výška se nepoužije pro strop/podlahu
       var needsH = typ().area === 'walls' || typ().area === 'both';
       $('c-h').closest('.calc-field').classList.toggle('calc-hidden', !needsH);
-      var needsOpen = needsH;
-      $('c-win').closest('.calc-field').classList.toggle('calc-hidden', !needsOpen);
-      $('c-door').closest('.calc-field').classList.toggle('calc-hidden', !needsOpen);
+      $('calc-openings').classList.toggle('calc-hidden', !(needsH || manual));
+    }
+
+    function pos(v) { v = parseFloat(v); return isFinite(v) && v > 0 ? v : 0; }
+
+    function renderOpenings() {
+      $('calc-open-list').innerHTML = state.openings.map(function (o, i) {
+        function cell(f, label, step, val) {
+          return '<div class="calc-field"><label class="contact-label">' + label + '<input type="number" min="0" step="' + step + '" value="' + val + '" data-o="' + i + '" data-f="' + f + '" /></label></div>';
+        }
+        return '<div class="calc-open-row">' +
+          '<span class="calc-open-name">' + esc(PRICING.openings[o.k].name) + '</span>' +
+          cell('w', 'Šířka (m)', '0.1', o.w) + cell('h', 'Výška (m)', '0.1', o.h) + cell('n', 'Počet', '1', o.n) +
+          '<button type="button" class="calc-open-remove" data-remove="' + i + '" aria-label="Odebrat">×</button></div>';
+      }).join('');
+    }
+
+    function openArea() {
+      return state.openings.reduce(function (sum, o) { return sum + pos(o.w) * pos(o.h) * pos(o.n); }, 0);
+    }
+
+    function openText() {
+      var f = function (n) { return n.toLocaleString('cs-CZ', { maximumFractionDigits: 2 }); };
+      return state.openings.filter(function (o) { return pos(o.w) * pos(o.h) * pos(o.n) > 0; }).map(function (o) {
+        return f(pos(o.n)) + '× ' + PRICING.openings[o.k].name.toLowerCase() + ' ' + f(pos(o.w)) + '×' + f(pos(o.h)) + ' m';
+      }).join(', ');
     }
 
     function area() {
       var t = typ();
-      if (t.area === 'manual' || state.mode === 'area') return num('c-area');
+      if (t.area === 'manual' || state.mode === 'area') return Math.max(0, num('c-area') - openArea());
       var l = num('c-l'), w = num('c-w'), h = num('c-h');
       var floor = l * w, walls = 2 * (l + w) * h;
-      var open = num('c-win') * PRICING.window + num('c-door') * PRICING.door;
-      var wallNet = Math.max(0, walls - open);
+      var wallNet = Math.max(0, walls - openArea());
       if (t.area === 'ceiling' || t.area === 'floor') return floor;
       if (t.area === 'walls') return wallNet;
       return wallNet + floor; // both
@@ -1221,6 +1597,9 @@
     }
 
     function update() {
+      var usesOpen = !$('calc-openings').classList.contains('calc-hidden');
+      var open = usesOpen ? openArea() : 0;
+      $('calc-open-sum').textContent = 'Odečteno: ' + open.toLocaleString('cs-CZ', { maximumFractionDigits: 2 }) + ' m²';
       var r = compute(), price = $('calc-price'), bd = $('calc-breakdown');
       if (!r) {
         price.textContent = '—';
@@ -1235,6 +1614,7 @@
       var k = r.vat ? 1 + PRICING.vat : 1;
       bd.innerHTML =
         '<li><span>Plocha</span><strong>' + r.area.toLocaleString('cs-CZ', { maximumFractionDigits: 1 }) + ' m²</strong></li>' +
+        (open > 0 ? '<li><span>Odečteno (okna, dveře)</span><strong>− ' + open.toLocaleString('cs-CZ', { maximumFractionDigits: 2 }) + ' m²</strong></li>' : '') +
         '<li><span>Práce' + (r.extras.length ? ' a doplňky' : '') + '</span><strong>' + fmt(r.labour[0] * k) + ' – ' + fmt(r.labour[1] * k) + '</strong></li>' +
         '<li><span>Materiál</span><strong>' + (state.material ? fmt(r.mat * k) : 'ne') + '</strong></li>';
 
@@ -1242,21 +1622,29 @@
         'Dobrý den,', '',
         'poptávám: ' + svc().name + ' – ' + typ().name,
         'Plocha: ' + r.area.toLocaleString('cs-CZ', { maximumFractionDigits: 1 }) + ' m²',
+        (open > 0 && openText() ? 'Okna/dveře: ' + openText() : null),
         'Doplňky: ' + (r.extras.length ? r.extras.join(', ') : 'žádné'),
         'Materiál: ' + (state.material ? 'ano' : 'ne'),
         'Orientační cena z kalkulačky: ' + r.lo.toLocaleString('cs-CZ') + ' – ' + r.hi.toLocaleString('cs-CZ') + ' Kč ' + (r.vat ? 's DPH' : 'bez DPH'),
         '', 'Prosím o přesnou nabídku.'
-      ].join('\n');
+      ].filter(function (x) { return x !== null; }).join('\n');
       $('calc-mailto').href = 'mailto:info@mbkbau.cz?subject=' + encodeURIComponent('Poptávka – ' + svc().name) +
         '&body=' + encodeURIComponent(body);
     }
 
-    function refresh() { renderChoices(); update(); }
+    function refresh() { renderChoices(); renderOpenings(); update(); }
 
     var card = document.querySelector('.calc-card');
     card.addEventListener('click', function (e) {
+      var rm = e.target.closest('[data-remove]');
+      if (rm) { state.openings.splice(+rm.getAttribute('data-remove'), 1); renderOpenings(); update(); return; }
       var b = e.target.closest('.calc-chip');
       if (!b) return;
+      if (b.hasAttribute('data-add')) {
+        var k = b.getAttribute('data-add'), d = PRICING.openings[k];
+        state.openings.push({ k: k, w: d.w, h: d.h, n: 1 });
+        renderOpenings(); update(); return;
+      }
       if (b.hasAttribute('data-s')) { state.s = +b.getAttribute('data-s'); state.t = 0; state.extras = {}; refresh(); }
       else if (b.hasAttribute('data-mode')) { state.mode = b.getAttribute('data-mode'); refresh(); }
     });
@@ -1267,7 +1655,11 @@
       else if (el.id === 'calc-material') { state.material = el.checked; update(); }
       else update();
     });
-    card.addEventListener('input', update);
+    card.addEventListener('input', function (e) {
+      var el = e.target;
+      if (el.hasAttribute && el.hasAttribute('data-o')) state.openings[+el.getAttribute('data-o')][el.getAttribute('data-f')] = el.value;
+      update();
+    });
 
     refresh();
   })();
@@ -1454,6 +1846,39 @@
           gsap.from('.services-list li', {
             x: -30, autoAlpha: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out',
             scrollTrigger: { trigger: list, start: 'top 85%', toggleActions: 'play none none reverse' }
+          });
+        }
+
+        /* ── Reference ── */
+        if (q('.refs-grid')) {
+          var isGrid = window.matchMedia('(min-width: 768px)').matches;
+          if (isGrid) {
+            gsap.from('.ref-card', {
+              clipPath: 'inset(100% 0 0 0)', duration: 1.1, stagger: 0.12, ease: 'power4.out',
+              scrollTrigger: { trigger: '.refs-grid', start: 'top 80%', toggleActions: 'play none none reverse' }
+            });
+            gsap.from('.ref-card img', {
+              scale: 1.15, duration: 1.4, stagger: 0.12, ease: 'power3.out',
+              scrollTrigger: { trigger: '.refs-grid', start: 'top 80%', toggleActions: 'play none none reverse' }
+            });
+          } else {
+            gsap.from('.ref-card', {
+              y: 30, autoAlpha: 0, duration: 0.9, stagger: 0.1, ease: 'power3.out',
+              scrollTrigger: { trigger: '.refs-grid', start: 'top 85%', toggleActions: 'play none none reverse' }
+            });
+          }
+          qa('[data-count]').forEach(function (el) {
+            var end = parseInt(el.getAttribute('data-count'), 10);
+            var o = { val: end };
+            gsap.from(o, {
+              val: 0, duration: 1.8, ease: 'power2.out', snap: { val: 1 },
+              onUpdate: function () { el.textContent = Math.round(o.val); },
+              scrollTrigger: { trigger: '.refs-stats', start: 'top 90%', toggleActions: 'play none none reverse' }
+            });
+          });
+          gsap.from('.ref-quote', {
+            y: 20, autoAlpha: 0, duration: 0.9, ease: 'power3.out',
+            scrollTrigger: { trigger: '.ref-quote', start: 'top 88%', toggleActions: 'play none none reverse' }
           });
         }
 
