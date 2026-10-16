@@ -1,0 +1,32 @@
+# Dependencies
+node_modules
+
+# Build outputs
+.next
+out
+dist
+build
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment variables
+.env
+.env*.local
+
+# IDEs and editors
+.idea
+.vscode/*
+*.swp
+.DS_Store
+
+# Logs
+*.log
+
+# Turbo
+.turbo
+
+# Misc
+.cache
+tmp
+coverage
+.claude/settings.local.json

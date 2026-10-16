@@ -1,0 +1,11 @@
+export PATH="$HOME/.bun/bin:$PATH"
+
+# Staged frontend files (added/copied/modified/renamed — skip deletions)
+STAGED="$(git diff --cached --name-only --diff-filter=ACMR -- frontend/)"
+[ -z "$STAGED" ] && exit 0
+
+# Lint & auto-fix ONLY the staged files (not the whole repo, which would
+# block commits on unrelated pre-existing errors), then re-stage the fixes.
+cd frontend && bun x ultracite fix --staged || exit 1
+cd ..
+echo "$STAGED" | xargs git add --

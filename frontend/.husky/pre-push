@@ -1,0 +1,22 @@
+export PATH="$HOME/.bun/bin:$PATH"
+
+# Skip if no frontend files in commits being pushed
+while read -r LOCAL_REF LOCAL_OID REMOTE_REF REMOTE_OID; do
+  if [ "$LOCAL_OID" = "0000000000000000000000000000000000000000" ]; then
+    continue
+  fi
+  # Use a range only when the remote tip exists locally; otherwise (new branch
+  # or remote advanced past us) diff the pushed commit's full tree.
+  if [ "$REMOTE_OID" = "0000000000000000000000000000000000000000" ] ||
+    ! git rev-parse --verify --quiet "${REMOTE_OID}^{commit}" >/dev/null; then
+    RANGE="$LOCAL_OID"
+  else
+    RANGE="$REMOTE_OID..$LOCAL_OID"
+  fi
+  if [ -n "$(git diff --name-only "$RANGE" -- frontend/)" ]; then
+    cd frontend && bun run check-types
+    exit $?
+  fi
+done
+
+exit 0

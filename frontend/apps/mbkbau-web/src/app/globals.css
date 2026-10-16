@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #f04f12;
+  --primary-dim: #d44410;
+  --on-primary: #ffffff;
+  --surface: #ffffff;
+  --surface-low: #f3f3f6;
+  --surface-mid: #eeeef0;
+  --surface-high: #e8e8ea;
+  --on-surface: #1c1b1b;
+  --on-surface-variant: #5b4444;
+  --radius: 0.75rem;
+}
+
+@theme inline {
+  --color-primary: var(--primary);
+  --color-primary-dim: var(--primary-dim);
+  --color-on-primary: var(--on-primary);
+  --color-surface: var(--surface);
+  --color-surface-low: var(--surface-low);
+  --color-surface-mid: var(--surface-mid);
+  --color-surface-high: var(--surface-high);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --radius-brand: var(--radius);
+  --font-sans: var(--font-montserrat), sans-serif;
+}
+
+@theme {
+  --animate-hero-kenburns: hero-kenburns 7s ease-out both;
+  --animate-hero-progress: hero-progress 4s linear both;
+  --animate-rotate-services: rotate-services 30s infinite;
+  --animate-leaflet-ping: leaflet-ping 2s ease-out infinite;
+
+  @keyframes hero-kenburns {
+    from {
+      transform: scale(1.06);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes hero-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes rotate-services {
+    0% {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    2% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    9% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    10% {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes leaflet-ping {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.6;
+    }
+    70% {
+      transform: translate(-50%, -50%) scale(2.4);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(2.4);
+      opacity: 0;
+    }
+  }
+}
+
+/* max-height: 700px — nízké desktopové okno */
+@custom-variant short (@media (max-height: 700px));
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    overflow-x: clip;
+    line-height: normal;
+  }
+
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    color: var(--on-surface);
+    background: var(--surface);
+  }
+
+  section[id] {
+    scroll-margin-top: 6.5rem;
+  }
+
+  .js .hero-content {
+    visibility: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}

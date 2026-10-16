@@ -1,0 +1,52 @@
+{
+  "name": "frontend",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "@tailwindcss/postcss": "^4.1.18",
+      "@types/leaflet": "^1.9.21",
+      "@types/node": "^24.10.0",
+      "@types/react": "~19.1.10",
+      "@types/react-dom": "~19.1.7",
+      "clsx": "^2.1.1",
+      "gsap": "^3.13.0",
+      "leaflet": "^1.9.4",
+      "next": "^15.1.6",
+      "react": "19.1.0",
+      "react-dom": "19.1.0",
+      "tailwind-merge": "^3.4.0",
+      "tailwindcss": "^4.1.18",
+      "typescript": "^5"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "check-types": "turbo check-types",
+    "dev:mbkbau-web": "turbo -F mbkbau-web dev",
+    "build:mbkbau-web": "turbo -F mbkbau-web build",
+    "export:mbkbau-web": "turbo -F mbkbau-web build && rm -rf ../dist && cp -R apps/mbkbau-web/out ../dist",
+    "check": "ultracite check",
+    "fix": "ultracite fix",
+    "biome": "biome check .",
+    "prepare": "cd .. && husky frontend/.husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.0",
+    "@commitlint/cli": "^20.4.3",
+    "@commitlint/config-conventional": "^20.4.3",
+    "@frontend/config": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "husky": "latest",
+    "turbo": "^2.8.12",
+    "typescript": "catalog:",
+    "ultracite": "7.2.4"
+  },
+  "packageManager": "bun@1.2.21"
+}
