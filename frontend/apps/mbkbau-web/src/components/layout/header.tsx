@@ -22,12 +22,13 @@ export const Header = ({ topBar }: { topBar: ReactNode }) => {
         </a>
 
         <nav aria-label="Hlavní navigace">
-          <ul className="hidden items-center gap-10 md:flex">
+          <ul className="hidden items-center gap-6 md:flex lg:gap-8">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <a
                   className="font-bold text-[0.875rem] text-on-surface-variant tracking-[-0.01em] no-underline transition-colors duration-200 hover:text-primary"
                   href={link.href}
+                  {...(link.external && { rel: 'noopener', target: '_blank' })}
                 >
                   {link.label}
                 </a>
@@ -66,6 +67,7 @@ export const Header = ({ topBar }: { topBar: ReactNode }) => {
             href={link.href}
             key={link.href}
             onClick={close}
+            {...(link.external && { rel: 'noopener', target: '_blank' })}
           >
             {link.label}
           </a>

@@ -10,6 +10,7 @@ import { MapSection } from '@/components/sections/map-section';
 import { References } from '@/components/sections/references';
 import { ServicesDetail } from '@/components/sections/services-detail';
 import { ServicesTicker } from '@/components/sections/services-ticker';
+import { FEATURES } from '@/data/site';
 
 export default function Home() {
   return (
@@ -19,8 +20,8 @@ export default function Home() {
       <ServicesTicker />
       <ServicesDetail />
       <Approach />
-      <References />
-      <Calculator />
+      {FEATURES.references && <References />}
+      {FEATURES.calculator && <Calculator />}
       <Contact />
       <MapSection />
       <Footer />

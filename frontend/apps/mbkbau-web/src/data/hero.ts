@@ -9,6 +9,9 @@ export interface HeroSlide {
   title: readonly [string, string];
 }
 
+export const ELEKTRO_ACCENT = { accent: '#F6C21B', on: '#2a2100', glow: 'rgba(246,194,27,0.3)' } as const;
+export const VODA_TOPENI_ACCENT = { accent: '#2EC4B6', on: '#032a26', glow: 'rgba(46,196,182,0.3)' } as const;
+
 export const HERO_SLIDES: readonly HeroSlide[] = [
   {
     label: 'Stavební práce',
@@ -23,8 +26,7 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     eyebrow: 'Klimatizace',
     title: ['PŘÍJEMNÉ', 'KLIMA'],
     subtitle: ['Montáž a servis klimatizací a tepelných čerpadel pro domácnosti i firmy.'],
-    // TODO: doplnit URL
-    cta: { label: 'Přejít na web →', href: '#', external: true },
+    cta: { label: 'Přejít na web →', href: 'https://klimcom.cz/', external: true },
     image: { src: '/images/hero-klimatizace.jpg', alt: 'Venkovní jednotka klimatizace' },
     accent: { accent: '#4DB8F0', on: '#06202e', glow: 'rgba(77,184,240,0.3)' },
   },
@@ -33,19 +35,17 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
     eyebrow: 'Elektromontáže',
     title: ['BEZPEČNÁ', 'ENERGIE'],
     subtitle: ['Elektroinstalace, rozvaděče a revize – od rodinných domů po komerční objekty.'],
-    // TODO: doplnit URL
-    cta: { label: 'Přejít na web →', href: '#', external: true },
+    cta: { label: 'Zjistit více →', href: '/elektro/', external: false },
     image: { src: '/images/hero-elektro.jpg', alt: 'Elektrikář při práci na rozvaděči' },
-    accent: { accent: '#F6C21B', on: '#2a2100', glow: 'rgba(246,194,27,0.3)' },
+    accent: ELEKTRO_ACCENT,
   },
   {
     label: 'Voda a topení',
     eyebrow: 'Voda a topení',
     title: ['TEPLO', 'DOMOVA'],
     subtitle: ['Rozvody vody, kotle a podlahové topení navržené na desítky let.'],
-    // TODO: doplnit URL
-    cta: { label: 'Přejít na web →', href: '#', external: true },
+    cta: { label: 'Zjistit více →', href: '/voda-topeni/', external: false },
     image: { src: '/images/hero-voda-topeni.jpg', alt: 'Instalatér při montáži vodoinstalace' },
-    accent: { accent: '#2EC4B6', on: '#032a26', glow: 'rgba(46,196,182,0.3)' },
+    accent: VODA_TOPENI_ACCENT,
   },
 ];

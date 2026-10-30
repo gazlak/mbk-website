@@ -2,7 +2,9 @@
 
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef } from 'react';
+import { BTN_PRIMARY, FOCUS_RING } from '@/components/ui/button-styles';
 import { SITE } from '@/data/site';
+import { cn } from '@/lib/utils';
 
 const PIN_HTML =
   '<div style="position:relative;width:40px;height:52px;">' +
@@ -13,6 +15,10 @@ const PIN_HTML =
   '<circle cx="20" cy="20" r="7" fill="white"/>' +
   '</svg>' +
   '</div>';
+
+const NAVIGATE_URL = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${SITE.addressShort}, ${SITE.city}`)}`;
+const PHONE_HREF = `tel:${SITE.phone.replace(/[^\d+]/g, '')}`;
+const HAS_PHONE = !SITE.phone.includes('X');
 
 const POPUP_HTML = `<strong>${SITE.name}</strong><br>${SITE.addressLines[0]}<br>${SITE.addressLines[1]}`;
 
@@ -32,7 +38,21 @@ export const MapSection = () => {
         return;
       }
       const { lat, lon, zoom } = SITE.map;
-      const map = L.map(el, { center: [lat, lon], zoom, scrollWheelZoom: false });
+      // Na dotykových zařízeních je mapa statická, aby při scrollování stránky neuvízla pod prstem
+      const touch = window.matchMedia('(pointer: coarse)').matches;
+      const map = L.map(el, {
+        center: [lat, lon],
+        zoom,
+        scrollWheelZoom: false,
+        ...(touch && {
+          dragging: false,
+          touchZoom: false,
+          doubleClickZoom: false,
+          boxZoom: false,
+          keyboard: false,
+          zoomControl: false,
+        }),
+      });
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> přispěvatelé',
@@ -58,8 +78,18 @@ export const MapSection = () => {
   }, []);
 
   return (
-    <section aria-label="Mapa – Znojmo" className="h-[500px]">
+    <section aria-label="Mapa – Znojmo" className="relative h-[360px] md:h-[500px]">
       <div className="size-full" ref={ref} />
+      <div className="absolute inset-x-4 bottom-4 z-[1000] flex flex-wrap justify-center gap-3 md:inset-x-auto md:right-6 md:bottom-6">
+        <a className={cn(BTN_PRIMARY, FOCUS_RING)} href={NAVIGATE_URL} rel="noopener noreferrer" target="_blank">
+          Navigovat
+        </a>
+        {HAS_PHONE && (
+          <a className={cn(BTN_PRIMARY, FOCUS_RING)} href={PHONE_HREF}>
+            Zavolat
+          </a>
+        )}
+      </div>
     </section>
   );
 };

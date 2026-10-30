@@ -17,13 +17,13 @@ Mimo Unsplash: loga `starting-sources/mbkbau*.png` (firemní logo), mapa OpenStr
 | services-inset.jpg | 1787672358208-94075d85ab7d |
 | sluzby/bouraci-main.jpg | 1599732596061-1f381074f115 |
 | sluzby/bouraci-inset.jpg | 1616551569669-b60598758c4f |
-| sluzby/elektro-main.jpg | 1621905251189-08b45d6a269e |
+| sluzby/elektro-main.jpg | 1751486289947-4f5f5961b3aa |
 | sluzby/elektro-inset.jpg | 1576446470246-499c738d1c8e |
 | sluzby/fasady-main.jpg | 1701529910662-b7c9d88c2762 |
 | sluzby/fasady-inset.jpg | 1760441981748-6a1180301478 |
 | sluzby/klimatizace-main.jpg | 1776860150250-757406c52438 |
 | sluzby/klimatizace-inset.jpg | 1718203862467-c33159fdc504 |
-| sluzby/malovani-main.jpg | 1693985120993-e9b203ce7631 |
+| sluzby/malovani-main.jpg | 1717281234297-3def5ae3eee1 |
 | sluzby/malovani-inset.jpg | 1599619585752-c3edb42a414c |
 | sluzby/obklady-main.jpg | 1706629503586-2731f65587ae |
 | sluzby/obklady-inset.jpg | 1762633203398-d4432b5269b1 |

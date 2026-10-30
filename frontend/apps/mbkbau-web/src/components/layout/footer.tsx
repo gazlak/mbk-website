@@ -8,8 +8,7 @@ export const Footer = () => (
   <footer className="bg-on-surface px-8 py-14 text-white/75">
     <div className="mx-auto grid max-w-[1280px] grid-cols-[1fr] gap-12 md:grid-cols-[1fr_1fr] md:items-start">
       <div>
-        {/* biome-ignore lint/a11y/useValidAnchor: odkaz na začátek stránky jako v originále */}
-        <a className="inline-flex shrink-0 items-center no-underline" href="#">
+        <a className="inline-flex shrink-0 items-center no-underline" href="/">
           {/* biome-ignore lint/correctness/useImageSize: statický export bez optimalizace obrázků */}
           <img alt={SITE.name} className="block h-40 w-auto" src="/mbkbau-white.png" />
         </a>
@@ -44,7 +43,11 @@ export const Footer = () => (
           </div>
           <div className={CONTACT_ITEM}>
             <PinIcon className={ICON} />
-            {SITE.city}
+            <span>
+              {SITE.addressLines[0]}
+              <br />
+              {SITE.addressLines[1]}
+            </span>
           </div>
         </div>
       </div>

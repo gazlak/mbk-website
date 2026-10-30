@@ -46,7 +46,7 @@ export const SERVICES: readonly Service[] = [
   service(
     'elektro',
     'Elektromontáže',
-    'Elektrikář při montáži rozvodů',
+    'Zásuvka při elektroinstalaci',
     'Nové rozvody, výměna rozvaděčů, osvětlení i zásuvky, včetně výchozí revize. Vše provádí kvalifikovaní elektrikáři podle platných norem.'
   ),
   service(
@@ -82,7 +82,7 @@ export const SERVICES: readonly Service[] = [
   service(
     'malovani',
     'Malířské a natěračské práce',
-    'Malíř při natírání stěny',
+    'Malíř při práci na lešení',
     'Malování interiérů, nátěry fasád, oken i konstrukcí. Pracujeme čistě, s kvalitními barvami a s krytím okolního zařízení.'
   ),
   service(

@@ -7,22 +7,43 @@ export const SITE = {
   city: 'Znojmo 669 02',
   hours: 'Po – Pá: 07:00 – 16:00',
   copyright: '© 2026 MBK BAU. Všechna práva vyhrazena.',
-  map: { lat: 48.8559, lon: 16.0493, zoom: 16 },
+  map: { lat: 48.8554, lon: 16.0592, zoom: 17 },
 } as const;
 
-export const NAV_LINKS = [
-  { href: '#co-delame', label: 'Služby' },
-  { href: '#pristup', label: 'Náš přístup' },
-  { href: '#reference', label: 'Reference' },
-  { href: '#kalkulacka', label: 'Kalkulačka' },
-] as const;
+// Dočasně vypnuté sekce – kód zůstává, přepnutím na true se vrátí
+export const FEATURES = { calculator: false, references: false, companyId: false } as const;
 
-export const CTA_LINK = { href: '#kontakt', label: 'Kontaktujte nás' } as const;
+type Feature = keyof typeof FEATURES;
+interface NavLink {
+  external?: boolean;
+  feature?: Feature;
+  href: string;
+  label: string;
+}
 
-export const FOOTER_LINKS = [
-  { href: '#co-delame', label: 'Služby' },
-  { href: '#pristup', label: 'Náš přístup' },
-  { href: '#kalkulacka', label: 'Kalkulačka' },
-  { href: '#kontakt', label: 'Kontakt' },
-  { href: '#', label: 'Ochrana údajů' },
-] as const;
+const isEnabled = (link: NavLink) => !link.feature || FEATURES[link.feature];
+
+const ALL_NAV_LINKS: NavLink[] = [
+  { href: '#co-delame', label: 'Naše služby' },
+  { href: '#pristup', label: 'O nás' },
+  { href: 'https://klimcom.cz/', label: 'Klimatizace', external: true },
+  { href: '/elektro/', label: 'Elektromontáže' },
+  { href: '/voda-topeni/', label: 'Voda a topení' },
+  { href: '#reference', label: 'Reference', feature: 'references' },
+  { href: '#kalkulacka', label: 'Kalkulačka', feature: 'calculator' },
+];
+
+export const NAV_LINKS = ALL_NAV_LINKS.filter(isEnabled);
+
+export const CTA_LINK: NavLink = { href: '#kontakt', label: 'Kontaktujte nás' };
+
+const ALL_FOOTER_LINKS: NavLink[] = [
+  { href: '/#co-delame', label: 'Služby' },
+  { href: '/#pristup', label: 'Náš přístup' },
+  { href: '/#reference', label: 'Reference', feature: 'references' },
+  { href: '/#kalkulacka', label: 'Kalkulačka', feature: 'calculator' },
+  { href: '/#kontakt', label: 'Kontakt' },
+  { href: '/ochrana-osobnich-udaju/', label: 'Ochrana údajů' },
+];
+
+export const FOOTER_LINKS = ALL_FOOTER_LINKS.filter(isEnabled);

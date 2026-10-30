@@ -25,6 +25,7 @@ export const Hero = () => {
   const [tick, setTick] = useState(0);
   const [paused, setPaused] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [offscreen, setOffscreen] = useState(false);
 
   const curRef = useRef(0);
   curRef.current = cur;
@@ -39,12 +40,12 @@ export const Hero = () => {
   // `tick` jen restartuje časovač (klik na stejný slide)
   // biome-ignore lint/correctness/useExhaustiveDependencies: tick slouží jako spouštěč restartu
   useEffect(() => {
-    if (reduce || paused || hidden) {
+    if (reduce || paused || hidden || offscreen) {
       return;
     }
     const id = setTimeout(() => go(cur + 1), INTERVAL);
     return () => clearTimeout(id);
-  }, [reduce, paused, hidden, cur, tick, go]);
+  }, [reduce, paused, hidden, offscreen, cur, tick, go]);
 
   useEffect(() => {
     const onVisibility = () => setHidden(document.hidden);
@@ -52,7 +53,7 @@ export const Hero = () => {
     return () => document.removeEventListener('visibilitychange', onVisibility);
   }, []);
 
-  // klávesy, hover, focus a swipe
+  // klávesy, focus a swipe
   useEffect(() => {
     const root = rootRef.current;
     if (!root) {
@@ -65,6 +66,25 @@ export const Hero = () => {
       setPaused(false);
       setTick((t) => t + 1);
     };
+    // focus pauzuje jen z klávesnice, klik myší ne
+    const onFocusIn = (e: FocusEvent) => {
+      if ((e.target as Element).matches(':focus-visible')) {
+        pause();
+      }
+    };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) {
+          return;
+        }
+        setOffscreen(!entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setTick((t) => t + 1);
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(root);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
         goRef.current(curRef.current - 1);
@@ -90,18 +110,15 @@ export const Hero = () => {
     const onCancel = () => {
       sx = null;
     };
-    root.addEventListener('mouseenter', pause);
-    root.addEventListener('mouseleave', resume);
-    root.addEventListener('focusin', pause);
+    root.addEventListener('focusin', onFocusIn);
     root.addEventListener('focusout', resume);
     root.addEventListener('keydown', onKey);
     root.addEventListener('pointerdown', onDown);
     root.addEventListener('pointerup', onUp);
     root.addEventListener('pointercancel', onCancel);
     return () => {
-      root.removeEventListener('mouseenter', pause);
-      root.removeEventListener('mouseleave', resume);
-      root.removeEventListener('focusin', pause);
+      observer.disconnect();
+      root.removeEventListener('focusin', onFocusIn);
       root.removeEventListener('focusout', resume);
       root.removeEventListener('keydown', onKey);
       root.removeEventListener('pointerdown', onDown);
@@ -133,7 +150,7 @@ export const Hero = () => {
       aria-roledescription="carousel"
       className="group/hero relative flex min-h-svh touch-pan-y items-center overflow-hidden [--hero-accent:var(--primary)] [--hero-glow:rgba(240,79,18,0.28)] [--hero-on:var(--on-primary)]"
       data-hero=""
-      data-paused={paused ? 'true' : 'false'}
+      data-paused={paused || hidden || offscreen ? 'true' : 'false'}
       ref={rootRef}
     >
       <div
