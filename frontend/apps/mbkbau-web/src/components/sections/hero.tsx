@@ -204,7 +204,7 @@ export const Hero = () => {
               >
                 {s.eyebrow}
               </span>
-              <h1 className="mb-6 max-w-[12ch] font-black text-[clamp(3rem,10vw,7rem)] text-white leading-[0.92] tracking-[-0.04em]">
+              <h1 className="mb-6 max-w-[12ch] font-black text-[clamp(2.25rem,10vw,7rem)] text-white leading-[0.92] tracking-[-0.04em]">
                 {s.title[0]}
                 <br />
                 <span className="text-(color:--hero-accent)">{s.title[1]}</span>

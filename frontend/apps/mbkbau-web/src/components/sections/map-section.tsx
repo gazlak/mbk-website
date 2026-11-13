@@ -78,7 +78,7 @@ export const MapSection = () => {
   }, []);
 
   return (
-    <section aria-label="Mapa – Znojmo" className="relative h-[360px] md:h-[500px]">
+    <section aria-label="Mapa – Znojmo" className="relative isolate h-[360px] md:h-[500px]">
       <div className="size-full" ref={ref} />
       <div className="absolute inset-x-4 bottom-4 z-[1000] flex flex-wrap justify-center gap-3 md:inset-x-auto md:right-6 md:bottom-6">
         <a className={cn(BTN_PRIMARY, FOCUS_RING)} href={NAVIGATE_URL} rel="noopener noreferrer" target="_blank">

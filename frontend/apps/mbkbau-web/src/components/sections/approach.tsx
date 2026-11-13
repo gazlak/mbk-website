@@ -4,14 +4,14 @@ import { SectionIntro } from '@/components/ui/section-intro';
 export const Approach = () => (
   <section className="bg-surface-low px-8 py-24" id="pristup">
     <div className="mx-auto grid max-w-[1280px] grid-cols-[1fr] items-center gap-16 md:grid-cols-[1fr_1fr]">
-      <SectionIntro eyebrow="Náš přístup" title="Kvalita v každém detailu, preciznost v každém spoji.">
+      <SectionIntro eyebrow="Náš přístup" title="Řekneme cenu i termín. A platí to.">
         <p
           className="max-w-[48ch] font-normal text-[1.0625rem] text-on-surface-variant leading-[1.75]"
           data-reveal-sibling=""
         >
-          Věříme, že úspěšná stavba začíná u vzájemné důvěry. Naše procesy jsou transparentní, termíny závazné a
-          materiály certifikované. Specializujeme se na rezidenční i komerční výstavbu. Důraz klademe na udržitelnost a
-          moderní technologické postupy, které zaručují dlouhou životnost vašich investic.
+          Na stavbě je nejhorší čekat na řemeslníky a dohadovat se o vícepráce. Proto u nás dostanete rozpočet po
+          položkách a termín, který držíme. Co neděláme sami, třeba střechu, zajistíme přes řemeslníky, se kterými
+          dlouhodobě spolupracujeme. Domlouváte se jen s námi. Pracujeme na Znojemsku a Brněnsku pro domácnosti i firmy.
         </p>
       </SectionIntro>
 

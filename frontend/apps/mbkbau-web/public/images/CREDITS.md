@@ -35,6 +35,10 @@ Mimo Unsplash: loga `starting-sources/mbkbau*.png` (firemní logo), mapa OpenStr
 | sluzby/stavebni-prace-inset.jpg | 1704005445445-2747074be8ac |
 | sluzby/voda-topeni-main.jpg | 1749532125405-70950966b0e5 |
 | sluzby/voda-topeni-inset.jpg | 1768321913920-d3ac011e0683 |
+| sluzby/oploceni-main.jpg | 1769831190663-95fe8454d8c9 |
+| sluzby/oploceni-inset.jpg | 1787094668913-75a0f86b72e9 |
+| sluzby/zamkova-dlazba-main.jpg | 1786996561187-80e0cb5f8bb2 |
+| sluzby/zamkova-dlazba-inset.jpg | 1607708131130-19ed5e90043b |
 
 Poznámka: licence Unsplash nezahrnuje souhlas zobrazených osob ani práva ke značkám – fotky s lidmi používat jen jako ilustrační.
 Pokud by se u některé fotky objevil problém, vyměnit ji a odpovídající řádek aktualizovat.
