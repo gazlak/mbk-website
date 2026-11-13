@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { type ReactNode, useState } from 'react';
 import { BTN_PRIMARY } from '@/components/ui/button-styles';
 import { CTA_LINK, NAV_LINKS, SITE } from '@/data/site';
@@ -10,13 +11,14 @@ const BAR = 'block h-0.5 rounded-[2px] bg-on-surface transition-[translate,rotat
 export const Header = ({ topBar }: { topBar: ReactNode }) => {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
+  const pathname = usePathname();
+  const isCurrent = (href: string) => href.startsWith('/') && !href.includes('#') && pathname === href;
 
   return (
     <header className="fixed inset-x-0 top-0 z-[100] bg-white/85 backdrop-blur-[16px]">
       {topBar}
       <div className="mx-auto flex max-w-[1280px] items-center justify-between px-8 py-[1.1rem]">
-        {/* biome-ignore lint/a11y/useValidAnchor: odkaz na začátek stránky jako v originále */}
-        <a className="inline-flex shrink-0 items-center no-underline" href="#">
+        <a className="inline-flex shrink-0 items-center no-underline" href="/">
           {/* biome-ignore lint/correctness/useImageSize: statický export bez optimalizace obrázků */}
           <img alt={SITE.name} className="block h-10 w-auto" src="/mbkbau.png" />
         </a>
@@ -26,7 +28,8 @@ export const Header = ({ topBar }: { topBar: ReactNode }) => {
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <a
-                  className="font-bold text-[0.875rem] text-on-surface-variant tracking-[-0.01em] no-underline transition-colors duration-200 hover:text-primary"
+                  aria-current={isCurrent(link.href) ? 'page' : undefined}
+                  className="font-bold text-[0.875rem] text-on-surface-variant tracking-[-0.01em] no-underline transition-colors duration-200 hover:text-primary aria-[current=page]:text-primary"
                   href={link.href}
                   {...(link.external && { rel: 'noopener', target: '_blank' })}
                 >
@@ -63,7 +66,8 @@ export const Header = ({ topBar }: { topBar: ReactNode }) => {
       >
         {[...NAV_LINKS, CTA_LINK].map((link) => (
           <a
-            className="py-[0.4rem] font-bold text-[1rem] text-on-surface-variant no-underline transition-colors duration-200 hover:text-primary"
+            aria-current={isCurrent(link.href) ? 'page' : undefined}
+            className="py-[0.4rem] font-bold text-[1rem] text-on-surface-variant no-underline transition-colors duration-200 hover:text-primary aria-[current=page]:text-primary"
             href={link.href}
             key={link.href}
             onClick={close}

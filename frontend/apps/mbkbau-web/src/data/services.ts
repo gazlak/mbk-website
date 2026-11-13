@@ -26,6 +26,8 @@ export const SERVICES_TICKER = [
   'Sádrokartony',
   'Obkladačství',
   'Fasády a zateplení',
+  'Oplocení',
+  'Zámková dlažba',
   'Malířské a natěračské práce',
   'Bourací práce',
 ] as const;
@@ -78,6 +80,18 @@ export const SERVICES: readonly Service[] = [
     'Fasády a zateplení',
     'Zateplování fasády rodinného domu',
     'Kontaktní zateplovací systémy a nové fasádní omítky, které snižují náklady na energie. Zajistíme lešení, zateplení i finální povrch.'
+  ),
+  service(
+    'oploceni',
+    'Oplocení',
+    'Stavba plotu kolem pozemku',
+    'Ploty z pletiva, plotových panelů, betonu i zděné ploty s podezdívkou. Postavíme základy, sloupky i vrata a branky, včetně přípravy na pohon.'
+  ),
+  service(
+    'zamkova-dlazba',
+    'Zámková dlažba',
+    'Pokládka zámkové dlažby',
+    'Příjezdové cesty, chodníky, terasy a parkovací stání. Vykopeme, zhutníme podloží, osadíme obrubníky a dlažbu položíme tak, aby se nepropadala.'
   ),
   service(
     'malovani',

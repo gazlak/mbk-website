@@ -14,9 +14,9 @@ export const VODA_TOPENI_ACCENT = { accent: '#2EC4B6', on: '#032a26', glow: 'rgb
 
 export const HERO_SLIDES: readonly HeroSlide[] = [
   {
-    label: 'Stavební práce',
-    eyebrow: 'MBK BAU · Stavební práce · Znojmo',
-    title: ['STAVÍME', 'BUDOUCNOST'],
+    label: 'Stavby',
+    eyebrow: 'MBK BAU · Stavební firma · Znojmo',
+    title: ['STAVBY A', 'REKONSTRUKCE'],
     subtitle: ['Precizní řemeslo a spolehlivost pro každý projekt.', 'Od základů po poslední detail.'],
     cta: { label: 'Kontaktujte nás', href: '#kontakt', external: false },
     image: { src: '/images/hero.jpg', alt: 'Stavební projekt v pohybu' },
@@ -42,8 +42,8 @@ export const HERO_SLIDES: readonly HeroSlide[] = [
   {
     label: 'Voda a topení',
     eyebrow: 'Voda a topení',
-    title: ['TEPLO', 'DOMOVA'],
-    subtitle: ['Rozvody vody, kotle a podlahové topení navržené na desítky let.'],
+    title: ['VODA, TOPENÍ,', 'PLYN'],
+    subtitle: ['Rozvody vody a plynu, kotle a podlahové topení navržené na desítky let.'],
     cta: { label: 'Zjistit více →', href: '/voda-topeni/', external: false },
     image: { src: '/images/hero-voda-topeni.jpg', alt: 'Instalatér při montáži vodoinstalace' },
     accent: VODA_TOPENI_ACCENT,
